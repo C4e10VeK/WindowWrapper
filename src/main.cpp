@@ -1,23 +1,32 @@
 #include <iostream>
 
-#include "Common/Window.hpp"
+#include "WindowWrapper.hpp"
+
+void onKeyPress(winWrap::IWindow &sender, winWrap::u32 key)
+{
+	if (key == 0x09)
+		sender.close();
+}
 
 int main()
 {
-    winWrap::Window wnd("Hello world");
+	winWrap::Window wnd;
 
-    if(!wnd.init())
-    {
-        std::cerr << "Failed to create Window" << std::endl;
-        std::abort();
-    }
+//    wnd.setPosition(winWrap::ivec2(600, 800));
 
-//	winWrap::X11Window wnd(800, 600);
-//	if (!wnd.init("Hello World"))
-//	{
-//		std::cerr << "Failed to create Window" << std::endl;
-//		std::abort();
-//	}
+	if (!wnd.init("Hello World", 800, 600))
+	{
+		std::cerr << "Failed to create Window" << std::endl;
+		std::abort();
+	}
+
+	wnd.keyPressed += &onKeyPress;
+
+	while (!wnd.isClosed())
+	{
+		wnd.pollEvent();
+	}
+
 //
 //    Atom wm_delete_window = XInternAtom(wnd.m_display, "WM_DELETE_WINDOW", False);
 //    XSetWMProtocols(wnd.m_display, wnd.m_xWindow, &wm_delete_window, 1);

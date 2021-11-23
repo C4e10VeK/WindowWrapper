@@ -2,13 +2,43 @@
 
 namespace winWrap
 {
-    bool WAWindow::init(const std::string &title)
-    {
-        return false;
-    }
+	bool PlatformWindow::init(const std::string &title, int width, int height)
+	{
+		return false;
+	}
 
-    void WAWindow::setTitle(const std::string &title)
-    {
+	bool PlatformWindow::isClosed() const
+	{
+		return true;
+	}
 
-    }
+	void PlatformWindow::close()
+	{
+
+	}
+
+	const std::string &PlatformWindow::getTitle() const
+	{
+		return m_title;
+	}
+
+	void PlatformWindow::setTitle(const std::string &title)
+	{
+
+	}
+
+	i32 PlatformWindow::getWidth() const
+	{
+		return 0;
+	}
+
+	i32 PlatformWindow::getHeight() const
+	{
+		return 0;
+	}
+
+	void PlatformWindow::pollEvent()
+	{
+
+	}
 }
