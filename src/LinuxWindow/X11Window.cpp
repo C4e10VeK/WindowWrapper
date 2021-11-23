@@ -2,13 +2,9 @@
 
 namespace winWrap
 {
-    X11Window::X11Window(std::string title, int width, int height)
-    : m_title(std::move(title)),
-      m_isClosed(false),
-      m_width(width),
+    X11Window::X11Window(int width, int height)
+    : m_width(width),
       m_height(height) { }
-
-    X11Window::X11Window(const std::string &title) : X11Window(title, 800, 600) { }
 
     X11Window::~X11Window()
     {
@@ -16,7 +12,7 @@ namespace winWrap
         XCloseDisplay(m_display);
     }
 
-    bool X11Window::init()
+    bool X11Window::init(const std::string &title)
     {
         m_display = XOpenDisplay(nullptr);
         if (m_display == nullptr)
@@ -52,7 +48,7 @@ namespace winWrap
         XSelectInput(m_display, m_xWindow, ExposureMask | KeyPressMask);
         XMapWindow(m_display, m_xWindow);
 
-        XStoreName(m_display, m_xWindow, m_title.c_str());
+        XStoreName(m_display, m_xWindow, title.c_str());
 
         if (!m_xWindow)
         {
@@ -62,18 +58,13 @@ namespace winWrap
         return true;
     }
 
-    bool X11Window::isClosed() const { return m_isClosed; }
-
-    void X11Window::close()
-    {
-        m_isClosed = true;
-    }
-
-    std::string X11Window::getTitle() const { return m_title; }
-
     void X11Window::setTitle(const std::string &title)
     {
-        m_title = title;
-        XStoreName(m_display, m_xWindow, m_title.c_str());
+        XStoreName(m_display, m_xWindow, title.c_str());
+    }
+
+    void X11Window::pollEvent()
+    {
+
     }
 }

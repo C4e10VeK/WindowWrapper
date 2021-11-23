@@ -6,40 +6,30 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "../Common/IWindow.hpp"
+#include "../Common/IPlatformWindowBase.hpp"
 
 namespace winWrap
 {
-    class X11Window : public IWindow
+    class X11Window final : public IPlatformWindowBase
     {
-    public:
-        Window m_xWindow{};
+    private:
+        ::Window m_xWindow{};
         Display *m_display{};
         int m_screen{};
-
-        std::string m_title;
-        bool m_isClosed;
 
         int m_width;
         int m_height;
 
-        friend int main();
     public:
-        X11Window(std::string title, int width, int height);
-
-        explicit X11Window(const std::string &title);
+        explicit X11Window(int width = 800, int height = 600);
 
         ~X11Window() override;
 
-        bool init() override;
-
-        bool isClosed() const override;
-
-        void close() override;
-
-        std::string getTitle() const override;
+        bool init(const std::string &title) override;
 
         void setTitle(const std::string &title) override;
+
+        void pollEvent();
     };
 }
 
