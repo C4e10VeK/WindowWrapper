@@ -1,9 +1,5 @@
 #include <iostream>
 
-#include <X11/Xlib.h>
-
-#include "LinuxWindow/X11Window.hpp"
-
 #include "Common/Window.hpp"
 
 int main()
