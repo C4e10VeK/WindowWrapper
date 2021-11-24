@@ -1,14 +1,10 @@
-#include "X11Window.hpp"
-
-#include <utility>
+#include <Common/Window.hpp>
 
 namespace winWrap
 {
-	PlatformWindow::PlatformWindow(std::string title, int width, int height)
-	: m_width(width),
-	  m_height(height),
-	  m_title(std::move(title)),
-	  m_isClosed(true) { if (!init(m_title, m_width, m_height)) std::abort(); }
+	PlatformWindow::PlatformWindow(const std::string &title, const WindowParams &params)
+		: m_params(params),
+	  	  m_isClosed(false) { init(); }
 
 	PlatformWindow::~PlatformWindow()
 	{
@@ -16,56 +12,12 @@ namespace winWrap
 		XCloseDisplay(m_display);
 	}
 
-	bool PlatformWindow::init(const std::string &title, int width, int height)
+	bool PlatformWindow::init(const std::string &title, const WindowParams &params)
 	{
 		m_title = title;
-		m_width = width;
-		m_height = height;
+		m_params = params;
 
-		m_display = XOpenDisplay(nullptr);
-		if (m_display == nullptr)
-		{
-			return false;
-		}
-
-		m_screen = DefaultScreen(m_display);
-
-		XSetWindowAttributes atrs = {
-			.border_pixel = 0,
-			.event_mask = StructureNotifyMask | KeyPressMask | KeyReleaseMask |
-						  PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
-						  ExposureMask | FocusChangeMask | VisibilityChangeMask |
-						  EnterWindowMask | LeaveWindowMask | PropertyChangeMask,
-			.colormap = XCreateColormap(m_display, RootWindow(m_display, m_screen), DefaultVisual(m_display, m_screen), AllocNone)
-		};
-
-		m_xWindow = XCreateWindow(
-			m_display,
-			RootWindow(m_display, m_screen),
-			m_position.x, m_position.y,
-			m_width, m_height,
-			0,
-			DefaultDepth(m_display, m_screen),
-			InputOutput,
-			DefaultVisual(m_display, m_screen),
-			CWColormap | CWEventMask | CWBorderPixel,
-			&atrs
-		);
-
-		m_atomDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
-		XSetWMProtocols(m_display, m_xWindow, &m_atomDeleteWindow, 1);
-
-		XSelectInput(m_display, m_xWindow, ExposureMask | KeyPressMask);
-		XMapWindow(m_display, m_xWindow);
-
-		XStoreName(m_display, m_xWindow, m_title.c_str());
-
-		if (!m_xWindow)
-		{
-			return false;
-		}
-
-		return true;
+		return createSpecificPlatformWindow();
 	}
 
 	bool PlatformWindow::isClosed() const
@@ -80,22 +32,27 @@ namespace winWrap
 
 	i32 PlatformWindow::getWidth() const
 	{
-		return m_width;
+		return m_params.width;
 	}
 
 	i32 PlatformWindow::getHeight() const
 	{
-		return m_height;
+		return m_params.height;
 	}
 
 	const ivec2 &PlatformWindow::getPosition() const
 	{
-		return m_position;
+		return m_params.position;
 	}
 
 	void PlatformWindow::setPosition(const ivec2 &position)
 	{
-		m_position = position;
+		m_params.position = position;
+	}
+
+	const WindowParams &PlatformWindow::getParams() const
+	{
+		return m_params;
 	}
 
 	const std::string &PlatformWindow::getTitle() const
@@ -116,7 +73,7 @@ namespace winWrap
 
 	void PlatformWindow::pollEvent()
 	{
-		while (XPending(m_display))
+		while (XPending(m_display) > 0)
 		{
 			XEvent e;
 			XNextEvent(m_display, &e);
@@ -141,5 +98,55 @@ namespace winWrap
 					break;
 			}
 		}
+	}
+
+	bool PlatformWindow::createSpecificPlatformWindow()
+	{
+		m_display = XOpenDisplay(nullptr);
+		if (m_display == nullptr)
+		{
+			return false;
+		}
+
+		m_screen = DefaultScreen(m_display);
+
+		XSetWindowAttributes atrs = {
+			.background_pixel = 0xffffff,
+			.border_pixel = 0,
+			.event_mask = StructureNotifyMask | KeyPressMask | KeyReleaseMask |
+						  PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
+						  ExposureMask | FocusChangeMask | VisibilityChangeMask |
+						  EnterWindowMask | LeaveWindowMask | PropertyChangeMask,
+			.colormap = XCreateColormap(m_display, RootWindow(m_display, m_screen), DefaultVisual(m_display, m_screen), AllocNone)
+		};
+
+		m_xWindow = XCreateWindow(
+			m_display,
+			RootWindow(m_display, m_screen),
+			m_params.position.x, m_params.position.y,
+			m_params.width, m_params.height,
+			0,
+			DefaultDepth(m_display, m_screen),
+			InputOutput,
+			DefaultVisual(m_display, m_screen),
+			CWColormap | CWEventMask | CWBorderPixel | CWBackPixel,
+			&atrs
+		);
+
+		m_atomDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
+		XSetWMProtocols(m_display, m_xWindow, &m_atomDeleteWindow, 1);
+
+		XSelectInput(m_display, m_xWindow, ExposureMask | KeyPressMask);
+		XMapWindow(m_display, m_xWindow);
+
+		XStoreName(m_display, m_xWindow, m_title.c_str());
+
+		if (!m_xWindow)
+		{
+			XCloseDisplay(m_display);
+			return false;
+		}
+
+		return true;
 	}
 }

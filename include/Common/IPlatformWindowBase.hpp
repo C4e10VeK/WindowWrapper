@@ -6,12 +6,17 @@
 
 namespace winWrap
 {
+	template <typename T>
+	struct vec2;
+
+	struct WindowParams;
+
 	class IPlatformWindowBase
 	{
 	public:
 		virtual ~IPlatformWindowBase() = default;
 
-		virtual bool init(const std::string &title, int width, int height) = 0;
+		virtual bool init(const std::string &title, const WindowParams &params) = 0;
 
 		virtual bool isClosed() const = 0;
 		virtual void close() = 0;
@@ -21,6 +26,9 @@ namespace winWrap
 
 		virtual i32 getWidth() const = 0;
 		virtual i32 getHeight() const = 0;
+
+		virtual const vec2<i32> &getPosition() const = 0;
+		virtual void setPosition(const vec2<i32> &position) = 0;
 
 		virtual void pollEvent() = 0;
 	};
