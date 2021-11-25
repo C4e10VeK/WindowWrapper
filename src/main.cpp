@@ -4,7 +4,6 @@
 
 void onKeyPress(winWrap::IWindow &sender, winWrap::u32 key)
 {
-	sender.setTitle("Я ненавижу кросс-платформу!!!");
 	if (key == 0x09)
 		sender.close();
 }

@@ -10,15 +10,15 @@
 #define LINUX_COMPILE
 #endif
 
-#include "IPlatformWindowBase.hpp"
+#include "IPlatformWindow.hpp"
 #include "WindowParams.hpp"
 #include "Event.hpp"
 
 namespace winWrap
 {
 
-	class PlatformWindow final : public IPlatformWindowBase
-	{
+	class PlatformWindow final : public IPlatformWindow
+{
 	private:
 		using KeyPressEvent = Event<IWindow&, u32>;
 

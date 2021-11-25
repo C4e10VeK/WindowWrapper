@@ -11,10 +11,10 @@ namespace winWrap
 
 	struct WindowParams;
 
-	class IPlatformWindowBase
+	class IPlatformWindow
 	{
 	public:
-		virtual ~IPlatformWindowBase() = default;
+		virtual ~IPlatformWindow() = default;
 
 		virtual bool init(const std::string &title, const WindowParams &params) = 0;
 
@@ -33,7 +33,7 @@ namespace winWrap
 		virtual void pollEvent() = 0;
 	};
 
-	using IWindow = IPlatformWindowBase;
+	using IWindow = IPlatformWindow;
 }
 
 #endif // WINDOWWRAPPER_SRC_COMMON_WINDOW_HPP

@@ -12,6 +12,7 @@ namespace winWrap
 	PlatformWindow::~PlatformWindow()
 	{
 		DestroyWindow(m_windowHandle);
+		FreeModule(m_windowInstance);
 	}
 
 	bool PlatformWindow::init(const std::string &title,  const WindowParams &params)
@@ -86,7 +87,7 @@ namespace winWrap
 
 		wc.lpfnWndProc = &PlatformWindow::WindowProc;
 		wc.hInstance = m_windowInstance;
-		wc.style = CS_HREDRAW | CS_VREDRAW;
+		wc.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
 		wc.lpszClassName = m_title.c_str();
 		wc.lpszMenuName = m_title.c_str();
 		wc.cbClsExtra = 0;
@@ -134,6 +135,11 @@ namespace winWrap
 			case WM_DESTROY:
 				{
 					pWindow->close();
+				}
+				break;
+			case WM_KEYDOWN:
+				{
+					pWindow->m_KeyPressed(*pWindow, wParam);
 				}
 				break;
 			default:

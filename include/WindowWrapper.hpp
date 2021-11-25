@@ -4,7 +4,7 @@
 #include <Common/Types.hpp>
 #include <Common/VectorT.hpp>
 #include <Common/WindowParams.hpp>
-#include <Common/IPlatformWindowBase.hpp>
+#include <Common/IPlatformWindow.hpp>
 #include <Common/Window.hpp>
 
 #endif // WINDOWWRAPPER_SRC_WINDOWWRAPPER_HPP
