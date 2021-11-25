@@ -37,14 +37,14 @@ namespace winWrap
 		WindowParams m_params;
 		std::string m_title;
 
-		bool m_isClosed{false};
+		bool m_isClosed;
 
 		KeyPressEvent m_KeyPressed;
 	public:
 		KeyPressEvent::IType &keyPressed{m_KeyPressed};
 
-		PlatformWindow() = default;
-		PlatformWindow(const std::string &title, const WindowParams &params);
+		PlatformWindow() : m_params(), m_title(), m_isClosed(true) { }
+		PlatformWindow(std::string title, const WindowParams &params);
 
 		~PlatformWindow() override;
 

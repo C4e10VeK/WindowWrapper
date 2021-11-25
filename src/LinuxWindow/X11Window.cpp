@@ -1,13 +1,17 @@
 #include <Common/Window.hpp>
+#include <utility>
 
 namespace winWrap
 {
-	PlatformWindow::PlatformWindow(const std::string &title, const WindowParams &params)
+	PlatformWindow::PlatformWindow(std::string title, const WindowParams &params)
 		: m_params(params),
+	  	  m_title(std::move(title)),
 	  	  m_isClosed(false) { init(); }
 
 	PlatformWindow::~PlatformWindow()
 	{
+		if (m_display == nullptr) return;
+
 		XDestroyWindow(m_display, m_xWindow);
 		XCloseDisplay(m_display);
 	}
@@ -16,6 +20,7 @@ namespace winWrap
 	{
 		m_title = title;
 		m_params = params;
+		m_isClosed = false;
 
 		return createSpecificPlatformWindow();
 	}

@@ -4,16 +4,17 @@
 
 void onKeyPress(winWrap::IWindow &sender, winWrap::u32 key)
 {
-	sender.setTitle("Я ненавижу кросс-платформу");
+	sender.setTitle("Я ненавижу кросс-платформу!!!");
 	if (key == 0x09)
 		sender.close();
 }
 
 int main()
 {
-	winWrap::Window wnd;
-
 	winWrap::WindowParams params(800, 600, {100, 100});
+
+//	winWrap::Window wnd("Hello World", params);
+	winWrap::Window wnd;
 
 	if (!wnd.init("Hello World", params))
 	{

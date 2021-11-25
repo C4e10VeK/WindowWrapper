@@ -4,9 +4,9 @@
 
 namespace winWrap
 {
-	PlatformWindow::PlatformWindow(const std::string &title, const WindowParams &params)
+	PlatformWindow::PlatformWindow(std::string title, const WindowParams &params)
 		: m_params(params),
-		  m_title(title),
+		  m_title(std::move(title)),
 		  m_isClosed(false) { init(); }
 
 	PlatformWindow::~PlatformWindow()
@@ -18,6 +18,7 @@ namespace winWrap
 	{
 		m_title = title;
 		m_params = params;
+		m_isClosed = false;
 
 		return createSpecificPlatformWindow();
 	}
@@ -67,7 +68,14 @@ namespace winWrap
 
 	void PlatformWindow::pollEvent()
 	{
+		while (PeekMessage(&m_winMsg, nullptr, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&m_winMsg);
+			DispatchMessage(&m_winMsg);
 
+			if (m_winMsg.message == WM_QUIT)
+				close();
+		}
 	}
 
 	bool PlatformWindow::createSpecificPlatformWindow()
@@ -108,6 +116,8 @@ namespace winWrap
 			return false;
 		}
 
+		SetWindowLongPtr(m_windowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+
 		ShowWindow(m_windowHandle, 1);
 
 		return true;
@@ -115,6 +125,21 @@ namespace winWrap
 
 	LRESULT CALLBACK PlatformWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		auto *pWindow = reinterpret_cast<PlatformWindow *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+
+		if (pWindow == nullptr) return DefWindowProc(hwnd, uMsg, wParam, lParam);
+
+		switch (uMsg)
+		{
+			case WM_DESTROY:
+				{
+					pWindow->close();
+				}
+				break;
+			default:
+				break;
+		}
+
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 }
