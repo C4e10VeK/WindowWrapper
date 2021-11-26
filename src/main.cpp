@@ -2,15 +2,9 @@
 
 #include <WindowWrapper.hpp>
 
-void onKeyPress(winWrap::IWindow &sender, winWrap::u32 key)
-{
-	if (key == 0x09)
-		sender.close();
-}
-
 int main()
 {
-	winWrap::WindowParams params(800, 600, {100, 100});
+	winWrap::WindowParams params(800, 600, {100, 100}, false);
 
 //	winWrap::Window wnd("Hello World", params);
 	winWrap::Window wnd;
@@ -21,7 +15,12 @@ int main()
 		std::abort();
 	}
 
-	wnd.keyPressed += &onKeyPress;
+	wnd.keyEvent += [](winWrap::IWindow &sender, winWrap::Key key, winWrap::EventType type)
+	{
+		std::cout << static_cast<winWrap::i32>(key) << std::endl;
+		if (key == winWrap::Key::Escape)
+			sender.close();
+	};
 
 	while (!wnd.isClosed())
 	{

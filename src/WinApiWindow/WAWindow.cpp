@@ -1,14 +1,11 @@
-#include <Common/Window.hpp>
+#include "WAWindow.hpp"
 
 #include <iostream>
 
+#include <Common/InternalEvent.hpp>
+
 namespace winWrap
 {
-	PlatformWindow::PlatformWindow(std::string title, const WindowParams &params)
-		: m_params(params),
-		  m_title(std::move(title)),
-		  m_isClosed(false) { init(); }
-
 	PlatformWindow::~PlatformWindow()
 	{
 		DestroyWindow(m_windowHandle);
@@ -67,35 +64,19 @@ namespace winWrap
 		m_params.position = position;
 	}
 
-	void PlatformWindow::pollEvent()
+	bool PlatformWindow::pollEvent(InternalEvent &event)
 	{
-		while (PeekMessage(&m_winMsg, nullptr, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&m_winMsg);
-			DispatchMessage(&m_winMsg);
 
-			if (m_winMsg.message == WM_QUIT)
-				close();
-		}
 	}
 
 	bool PlatformWindow::createSpecificPlatformWindow()
 	{
 		m_windowInstance = GetModuleHandle(nullptr);
 
-		WNDCLASS wc = WNDCLASS();
+		if (m_windowInstance == nullptr)
+			return false;
 
-		wc.lpfnWndProc = &PlatformWindow::WindowProc;
-		wc.hInstance = m_windowInstance;
-		wc.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-		wc.lpszClassName = m_title.c_str();
-		wc.lpszMenuName = m_title.c_str();
-		wc.cbClsExtra = 0;
-		wc.cbWndExtra = 0;
-		wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
-		wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-
-		if (!RegisterClass(&wc))
+		if (!createWindowClass())
 		{
 			std::cerr << "Error windowclass create: " << GetLastError() << std::endl;
 			return false;
@@ -103,8 +84,8 @@ namespace winWrap
 
 		m_windowHandle = CreateWindowExA(
 				0,
-			m_title.c_str(),
-			m_title.c_str(),
+				m_title.c_str(),
+				m_title.c_str(),
 				WS_OVERLAPPEDWINDOW,
 				m_params.position.x, m_params.position.y,
 				m_params.width, m_params.height,
@@ -124,6 +105,24 @@ namespace winWrap
 		return true;
 	}
 
+	bool PlatformWindow::createWindowClass()
+	{
+		WNDCLASSEX wcex = { 0 };
+
+		wcex.cbSize = sizeof(wcex);
+		wcex.lpfnWndProc = &PlatformWindow::WindowProc;
+		wcex.cbWndExtra = 0;
+		wcex.cbClsExtra = 0;
+		wcex.hInstance = m_windowInstance;
+		wcex.style = CS_HREDRAW | CS_VREDRAW;
+		wcex.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+		wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+		wcex.lpszClassName = m_title.c_str();
+		wcex.lpszMenuName = m_title.c_str();
+
+		return RegisterClassEx(&wcex);
+	}
+
 	LRESULT CALLBACK PlatformWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		auto *pWindow = reinterpret_cast<PlatformWindow *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
@@ -139,11 +138,16 @@ namespace winWrap
 				break;
 			case WM_KEYDOWN:
 				{
-					pWindow->m_KeyPressed(*pWindow, wParam);
+
+				}
+				break;
+			case WM_KEYUP:
+				{
+
 				}
 				break;
 			default:
-				break;
+				return 0;
 		}
 
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);

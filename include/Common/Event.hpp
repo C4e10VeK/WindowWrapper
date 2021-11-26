@@ -1,14 +1,16 @@
-#ifndef EVENT_HPP
-#define EVENT_HPP
+#ifndef WINDOWWRAPPER_EVENT_HPP
+#define WINDOWWRAPPER_EVENT_HPP
 
 #include <vector>
 #include <memory>
 #include <cassert>
 #include <algorithm>
+#include <functional>
 
 namespace winWrap
 {
-	template <typename... Args> class AbstractEventHandler
+	template <typename... Args>
+	class AbstractEventHandler
 	{
 	public:
 		AbstractEventHandler() = default;
@@ -23,7 +25,8 @@ namespace winWrap
 		virtual bool isEqual(const AbstractEventHandler<Args...> &o) const = 0;
 	};
 
-	template <typename... Args> class FunctionEventHandler : public AbstractEventHandler<Args...>
+	template <typename... Args> class
+	FunctionEventHandler : public AbstractEventHandler<Args...>
 	{
 	private:
 		using function = void (*)(Args...);
@@ -43,7 +46,8 @@ namespace winWrap
 		}
 	};
 
-	template <class C, typename... Args> class MethodEventHandler : public AbstractEventHandler<Args...>
+	template <class C, typename... Args>
+	class MethodEventHandler : public AbstractEventHandler<Args...>
 	{
 	private:
 		using Method = void (C::*)(Args...);
@@ -64,7 +68,8 @@ namespace winWrap
 		}
 	};
 
-	template <typename... Args> class IEvent
+	template <typename... Args>
+	class IEvent
 	{
 	public:
 		virtual ~IEvent() = default;
@@ -85,7 +90,8 @@ namespace winWrap
 		virtual void remove(void (*f)(Args...)) = 0;
 	};
 
-	template <typename... Args> class Event : public IEvent<Args...>
+	template <typename... Args>
+	class Event : public IEvent<Args...>
 	{
 	private:
 		using HandlerPtr = std::shared_ptr<AbstractEventHandler<Args...>>;
@@ -159,4 +165,4 @@ namespace winWrap
 		return std::make_shared<MethodEventHandler<C, Args...>>(object, method);
 	}
 }
-#endif
+#endif // WINDOWWRAPPER_EVENT_HPP

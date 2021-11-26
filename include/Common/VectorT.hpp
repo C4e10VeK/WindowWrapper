@@ -1,5 +1,5 @@
-#ifndef WINDOWWRAPPER_SRC_COMMON_VECTORT_HPP
-#define WINDOWWRAPPER_SRC_COMMON_VECTORT_HPP
+#ifndef WINDOWWRAPPER_VECTORT_HPP
+#define WINDOWWRAPPER_VECTORT_HPP
 
 #include "Types.hpp"
 
@@ -31,4 +31,4 @@ namespace winWrap
 	using fvec2 = vec2<float>;
 }
 
-#endif // WINDOWWRAPPER_SRC_COMMON_VECTORT_HPP
+#endif // WINDOWWRAPPER_VECTORT_HPP

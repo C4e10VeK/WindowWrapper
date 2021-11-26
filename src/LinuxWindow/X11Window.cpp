@@ -1,73 +1,62 @@
-#include <Common/Window.hpp>
+#include "X11Window.hpp"
 #include <utility>
+
+#include <Common/InternalEvent.hpp>
+
+#include "../Common/InputUtils.hpp"
 
 namespace winWrap
 {
-	PlatformWindow::PlatformWindow(std::string title, const WindowParams &params)
-		: m_params(params),
-	  	  m_title(std::move(title)),
-	  	  m_isClosed(false) { init(); }
-
 	PlatformWindow::~PlatformWindow()
 	{
 		if (m_display == nullptr) return;
 
 		XDestroyWindow(m_display, m_xWindow);
+		XFlush(m_display);
 		XCloseDisplay(m_display);
 	}
 
 	bool PlatformWindow::init(const std::string &title, const WindowParams &params)
 	{
-		m_title = title;
-		m_params = params;
-		m_isClosed = false;
-
-		return createSpecificPlatformWindow();
-	}
-
-	bool PlatformWindow::isClosed() const
-	{
-		return m_isClosed;
-	}
-
-	void PlatformWindow::close()
-	{
-		m_isClosed = true;
+		return createSpecificPlatformWindow(title, params);
 	}
 
 	i32 PlatformWindow::getWidth() const
 	{
-		return m_params.width;
+		return 0;
 	}
 
 	i32 PlatformWindow::getHeight() const
 	{
-		return m_params.height;
+		return 0;
 	}
 
 	const ivec2 &PlatformWindow::getPosition() const
 	{
-		return m_params.position;
+		static ivec2 lol(0);
+		return lol;
 	}
 
 	void PlatformWindow::setPosition(const ivec2 &position)
 	{
-		m_params.position = position;
+		XMoveWindow(m_display, m_xWindow, position.x, position.y);
+		XFlush(m_display);
 	}
 
 	const WindowParams &PlatformWindow::getParams() const
 	{
-		return m_params;
+		static WindowParams p;
+		return p;
 	}
 
 	const std::string &PlatformWindow::getTitle() const
 	{
-		return m_title;
+		static std::string a;
+		return a;
 	}
 
 	void PlatformWindow::setTitle(const std::string &title)
 	{
-		m_title = title;
 		XStoreName(m_display, m_xWindow, title.c_str());
 	}
 
@@ -76,47 +65,64 @@ namespace winWrap
 
 	}
 
-	void PlatformWindow::pollEvent()
+	bool PlatformWindow::pollEvent(InternalEvent &event)
 	{
-		while (XPending(m_display) > 0)
-		{
-			XEvent e;
-			XNextEvent(m_display, &e);
+		XEvent xEvent;
+		XNextEvent(m_display, &xEvent);
 
-			switch (e.type)
-			{
-				case KeyPress:
-					m_KeyPressed(*this, e.xkey.keycode);
-					break;
-				case KeyRelease:
-						break;
-				case ClientMessage:
+		switch (xEvent.type)
+		{
+			case KeyPress:
+				{
+					Key key = Key::Non;
+					for (int i = 0; i < 4; ++i)
 					{
-						if (e.xclient.data.l[0] == m_atomDeleteWindow)
-							close();
+						key = specificPlatformKeyToKey(XLookupKeysym(&xEvent.xkey, i));
+						if (key != Key::Non)
+							break;
 					}
-					break;
-				case DestroyNotify:
-					close();
-					break;
-				default:
-					break;
-			}
+
+					event.type = EventType::KeyPressed;
+					event.key = key;
+				}
+				return true;
+			case KeyRelease:
+				{
+					Key key = Key::Non;
+					for (int i = 0; i < 4; ++i)
+					{
+						key = specificPlatformKeyToKey(XLookupKeysym(&xEvent.xkey, i));
+						if (key != Key::Non)
+							break;
+					}
+
+					event.type = EventType::KeyReleased;
+					event.key = key;
+				}
+				return true;
+			case ClientMessage:
+					{
+						if (xEvent.xclient.data.l[0] == m_atomDeleteWindow)
+						{
+							event.type = EventType::Closed;
+						}
+					}
+				return true;
 		}
+
+		return false;
 	}
 
-	bool PlatformWindow::createSpecificPlatformWindow()
+	bool PlatformWindow::createSpecificPlatformWindow(const std::string &title, const WindowParams &params)
 	{
 		m_display = XOpenDisplay(nullptr);
 		if (m_display == nullptr)
-		{
 			return false;
-		}
+
 
 		m_screen = DefaultScreen(m_display);
 
 		XSetWindowAttributes atrs = {
-			.background_pixel = 0xffffff,
 			.border_pixel = 0,
 			.event_mask = StructureNotifyMask | KeyPressMask | KeyReleaseMask |
 						  PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
@@ -127,14 +133,13 @@ namespace winWrap
 
 		m_xWindow = XCreateWindow(
 			m_display,
-			RootWindow(m_display, m_screen),
-			m_params.position.x, m_params.position.y,
-			m_params.width, m_params.height,
+			RootWindow(m_display, m_screen), params.position.x, params.position.y, params.width,
+			params.height,
 			0,
 			DefaultDepth(m_display, m_screen),
 			InputOutput,
 			DefaultVisual(m_display, m_screen),
-			CWColormap | CWEventMask | CWBorderPixel | CWBackPixel,
+			CWColormap | CWEventMask | CWBorderPixel,
 			&atrs
 		);
 
@@ -144,7 +149,7 @@ namespace winWrap
 		XSelectInput(m_display, m_xWindow, ExposureMask | KeyPressMask);
 		XMapWindow(m_display, m_xWindow);
 
-		XStoreName(m_display, m_xWindow, m_title.c_str());
+		XStoreName(m_display, m_xWindow, title.c_str());
 
 		if (!m_xWindow)
 		{

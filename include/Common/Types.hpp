@@ -1,5 +1,5 @@
-#ifndef WINDOWWRAPPER_SRC_COMMON_TYPES_HPP
-#define WINDOWWRAPPER_SRC_COMMON_TYPES_HPP
+#ifndef WINDOWWRAPPER_TYPES_HPP
+#define WINDOWWRAPPER_TYPES_HPP
 
 #include <cstdint>
 
@@ -16,4 +16,4 @@ namespace winWrap
 	using u64 = std::uint64_t;
 }
 
-#endif // WINDOWWRAPPER_SRC_COMMON_TYPES_HPP
+#endif // WINDOWWRAPPER_TYPES_HPP

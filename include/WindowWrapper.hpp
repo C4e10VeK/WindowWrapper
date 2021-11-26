@@ -1,5 +1,5 @@
-#ifndef WINDOWWRAPPER_SRC_WINDOWWRAPPER_HPP
-#define WINDOWWRAPPER_SRC_WINDOWWRAPPER_HPP
+#ifndef WINDOWWRAPPER_WINDOWWRAPPER_HPP
+#define WINDOWWRAPPER_WINDOWWRAPPER_HPP
 
 #include <Common/Types.hpp>
 #include <Common/VectorT.hpp>
@@ -7,4 +7,4 @@
 #include <Common/IPlatformWindow.hpp>
 #include <Common/Window.hpp>
 
-#endif // WINDOWWRAPPER_SRC_WINDOWWRAPPER_HPP
+#endif // WINDOWWRAPPER_WINDOWWRAPPER_HPP

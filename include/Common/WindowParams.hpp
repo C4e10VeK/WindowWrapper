@@ -1,5 +1,5 @@
-#ifndef WINDOWWRAPPER_SRC_COMMON_WINDOWPARAMS_HPP
-#define WINDOWWRAPPER_SRC_COMMON_WINDOWPARAMS_HPP
+#ifndef WINDOWWRAPPER_WINDOWPARAMS_HPP
+#define WINDOWWRAPPER_WINDOWPARAMS_HPP
 
 #include "Types.hpp"
 #include "VectorT.hpp"
@@ -11,7 +11,7 @@ namespace winWrap
 		i32 width;
 		i32 height;
 
-		ivec2 position{0};
+		ivec2 position;
 
 		bool resizeable;
 
@@ -23,4 +23,4 @@ namespace winWrap
 	};
 }
 
-#endif // WINDOWWRAPPER_SRC_COMMON_WINDOWPARAMS_HPP
+#endif // WINDOWWRAPPER_WINDOWPARAMS_HPP
