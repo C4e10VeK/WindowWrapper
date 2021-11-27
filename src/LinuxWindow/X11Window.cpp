@@ -23,12 +23,16 @@ namespace winWrap
 
 	i32 PlatformWindow::getWidth() const
 	{
-		return 0;
+		XWindowAttributes atr;
+		XGetWindowAttributes(m_display, m_xWindow, &atr);
+		return atr.width;
 	}
 
 	i32 PlatformWindow::getHeight() const
 	{
-		return 0;
+		XWindowAttributes atr;
+		XGetWindowAttributes(m_display, m_xWindow, &atr);
+		return atr.height;
 	}
 
 	const ivec2 &PlatformWindow::getPosition() const
@@ -41,18 +45,6 @@ namespace winWrap
 	{
 		XMoveWindow(m_display, m_xWindow, position.x, position.y);
 		XFlush(m_display);
-	}
-
-	const WindowParams &PlatformWindow::getParams() const
-	{
-		static WindowParams p;
-		return p;
-	}
-
-	const std::string &PlatformWindow::getTitle() const
-	{
-		static std::string a;
-		return a;
 	}
 
 	void PlatformWindow::setTitle(const std::string &title)

@@ -36,9 +36,6 @@ namespace winWrap
 		const ivec2 &getPosition() const override;
 		void setPosition(const ivec2 &position) override;
 
-		const WindowParams &getParams() const override;
-
-		const std::string &getTitle() const override;
 		void setTitle(const std::string &title) override;
 
 		void setResizable(bool resizable) override;

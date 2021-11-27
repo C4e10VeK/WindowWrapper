@@ -17,7 +17,6 @@ namespace winWrap
 
 	Window::Window(std::string title, const WindowParams &params)
 		: m_title(std::move(title)),
-	  	  m_params(params),
 	  	  m_isClosed(false),
 		  keyEvent(m_keyEvent)
 	{
@@ -30,7 +29,6 @@ namespace winWrap
 		close();
 
 		m_title = title;
-		m_params = params;
 		m_isClosed = false;
 
 		if (m_platformWindow == nullptr)
@@ -39,24 +37,40 @@ namespace winWrap
 		return m_platformWindow->init(title, params);
 	}
 
+	bool Window::isClosed() const
+	{
+		return m_platformWindow == nullptr || m_isClosed;
+	}
+
+	void Window::close()
+	{
+		m_isClosed = true;
+		if (m_platformWindow != nullptr)
+		{
+			m_platformWindow.reset();
+		}
+	}
+
 	i32 Window::getWidth() const
 	{
-		return m_params.width;
+		return m_platformWindow != nullptr ? m_platformWindow->getWidth() : 0;
 	}
 
 	i32 Window::getHeight() const
 	{
-		return m_params.height;
+		return m_platformWindow != nullptr ? m_platformWindow->getHeight() : 0;
 	}
 
-	const vec2<i32> &Window::getPosition() const
+	const ivec2 &Window::getPosition() const
 	{
-		return m_params.position;
+		static ivec2 err(0);
+		return m_platformWindow != nullptr ? m_platformWindow->getPosition() : err;
 	}
 
-	void Window::setPosition(const vec2<i32> &position)
+	void Window::setPosition(const ivec2 &position)
 	{
-		m_params.position = position;
+		if (m_platformWindow == nullptr) return;
+
 		m_platformWindow->setPosition(position);
 	}
 
@@ -67,22 +81,15 @@ namespace winWrap
 
 	void Window::setTitle(const std::string &title)
 	{
+		if (m_platformWindow == nullptr) return;
+
 		m_title = title;
 		m_platformWindow->setTitle(title);
 	}
 
-	bool Window::isClosed() const
+	WindowParams Window::getParams()
 	{
-		return m_isClosed;
-	}
-
-	void Window::close()
-	{
-		m_isClosed = true;
-		if (m_platformWindow != nullptr)
-		{
-			m_platformWindow.reset();
-		}
+		return WindowParams(getWidth(), getHeight(), getPosition(), "");
 	}
 
 	void Window::pollEvent()

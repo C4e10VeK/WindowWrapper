@@ -8,18 +8,18 @@
 #include "IWindow.hpp"
 
 #include "IPlatformWindow.hpp"
-#include "WindowParams.hpp"
 #include "InternalEvent.hpp"
 
 namespace winWrap
 {
+	struct WindowParams;
+
 	class Window : noncopybale, public IWindow
 	{
 	private:
 		using KeyEvent = Event<IWindow &, Key, EventType>;
 		std::unique_ptr<IPlatformWindow> m_platformWindow;
 
-		WindowParams m_params;
 		std::string m_title;
 
 		bool m_isClosed;
@@ -33,17 +33,19 @@ namespace winWrap
 
 		bool init(const std::string &title, const WindowParams &params) override;
 
+		bool isClosed() const override;
+		void close() override;
+
 		i32 getHeight() const override;
 		i32 getWidth() const override;
 
-		void setPosition(const vec2<i32> &position) override;
-		const vec2<i32> & getPosition() const override;
+		void setPosition(const ivec2 &position) override;
+		const ivec2 & getPosition() const override;
 
 		const std::string & getTitle() const override;
 		void setTitle(const std::string &title) override;
 
-		bool isClosed() const override;
-		void close() override;
+		WindowParams getParams() override;
 
 		void pollEvent() override;
 

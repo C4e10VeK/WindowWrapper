@@ -14,54 +14,39 @@ namespace winWrap
 
 	bool PlatformWindow::init(const std::string &title,  const WindowParams &params)
 	{
-		m_title = title;
-		m_params = params;
-		m_isClosed = false;
-
-		return createSpecificPlatformWindow();
-	}
-
-	bool PlatformWindow::isClosed() const
-	{
-		return m_isClosed;
-	}
-
-	void PlatformWindow::close()
-	{
-		m_isClosed = true;
-	}
-
-	const std::string &PlatformWindow::getTitle() const
-	{
-		return m_title;
+		return createSpecificPlatformWindow(title, params);
 	}
 
 	void PlatformWindow::setTitle(const std::string &title)
 	{
-		m_title = title;
-		SetWindowText(m_windowHandle, m_title.c_str());
+		SetWindowText(m_windowHandle, title.c_str());
 
 		std::cout << "Error in " << __func__ << ": " << GetLastError() << std::endl;
 	}
 
 	i32 PlatformWindow::getWidth() const
 	{
-		return m_params.width;
+		RECT wRect;
+		GetWindowRect(m_windowHandle, &wRect);
+		return wRect.right;
 	}
 
 	i32 PlatformWindow::getHeight() const
 	{
-		return m_params.height;
+		RECT wRect;
+		GetWindowRect(m_windowHandle, &wRect);
+		return wRect.bottom;
 	}
 
 	const ivec2 &PlatformWindow::getPosition() const
 	{
-		return m_params.position;
+		static ivec2 o(0);
+		return o;
 	}
 
 	void PlatformWindow::setPosition(const ivec2 &position)
 	{
-		m_params.position = position;
+		SetWindowPos(m_windowHandle, nullptr, position.x, position.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	}
 
 	bool PlatformWindow::pollEvent(InternalEvent &event)
@@ -69,7 +54,7 @@ namespace winWrap
 
 	}
 
-	bool PlatformWindow::createSpecificPlatformWindow()
+	bool PlatformWindow::createSpecificPlatformWindow(const std::string &title, const WindowParams &params)
 	{
 		m_windowInstance = GetModuleHandle(nullptr);
 
@@ -84,11 +69,11 @@ namespace winWrap
 
 		m_windowHandle = CreateWindowExA(
 				0,
-				m_title.c_str(),
-				m_title.c_str(),
+				title.c_str(),
+				title.c_str(),
 				WS_OVERLAPPEDWINDOW,
-				m_params.position.x, m_params.position.y,
-				m_params.width, m_params.height,
+				params.position.x, params.position.y,
+				params.width, params.height,
 				nullptr, nullptr, m_windowInstance, nullptr
 			);
 
@@ -105,7 +90,7 @@ namespace winWrap
 		return true;
 	}
 
-	bool PlatformWindow::createWindowClass()
+	bool PlatformWindow::createWindowClass(const std::string &title)
 	{
 		WNDCLASSEX wcex = { 0 };
 
@@ -117,15 +102,15 @@ namespace winWrap
 		wcex.style = CS_HREDRAW | CS_VREDRAW;
 		wcex.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 		wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		wcex.lpszClassName = m_title.c_str();
-		wcex.lpszMenuName = m_title.c_str();
+		wcex.lpszClassName = title.c_str();
+		wcex.lpszMenuName = title.c_str();
 
 		return RegisterClassEx(&wcex);
 	}
 
 	LRESULT CALLBACK PlatformWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		auto *pWindow = reinterpret_cast<PlatformWindow *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		PlatformWindow *pWindow = reinterpret_cast<PlatformWindow *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
 		if (pWindow == nullptr) return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
@@ -133,7 +118,7 @@ namespace winWrap
 		{
 			case WM_DESTROY:
 				{
-					pWindow->close();
+
 				}
 				break;
 			case WM_KEYDOWN:

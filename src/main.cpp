@@ -4,11 +4,13 @@
 
 int main()
 {
-	winWrap::WindowParams params(800, 600, {100, 100}, false);
+	winWrap::WindowParams params(800, 600, winWrap::ivec2(100), "", false);
+
+	winWrap::Event<winWrap::IWindow &, winWrap::Key, winWrap::EventType> a;
 
 //	winWrap::Window wnd("Hello World", params);
 	winWrap::Window wnd;
-
+	
 	if (!wnd.init("Hello World", params))
 	{
 		std::cerr << "Failed to create Window" << std::endl;
@@ -17,7 +19,6 @@ int main()
 
 	wnd.keyEvent += [](winWrap::IWindow &sender, winWrap::Key key, winWrap::EventType type)
 	{
-		std::cout << static_cast<winWrap::i32>(key) << std::endl;
 		if (key == winWrap::Key::Escape)
 			sender.close();
 	};

@@ -25,14 +25,16 @@ namespace winWrap
 		virtual bool isClosed() const = 0;
 		virtual void close() = 0;
 
-		virtual const std::string &getTitle() const = 0;
-		virtual void setTitle(const std::string &title) = 0;
-
 		virtual i32 getWidth() const = 0;
 		virtual i32 getHeight() const = 0;
 
 		virtual const ivec2 &getPosition() const = 0;
 		virtual void setPosition(const ivec2 &position) = 0;
+
+		virtual const std::string &getTitle() const = 0;
+		virtual void setTitle(const std::string &title) = 0;
+
+		virtual WindowParams getParams() = 0;
 
 		virtual void pollEvent() = 0;
 	};

@@ -25,9 +25,6 @@ namespace winWrap
 		virtual const vec2<i32> &getPosition() const = 0;
 		virtual void setPosition(const vec2<i32> &position) = 0;
 
-		virtual const WindowParams &getParams() const = 0;
-
-		virtual const std::string &getTitle() const = 0;
 		virtual void setTitle(const std::string &title) = 0;
 
 		virtual void setResizable(bool resizable) = 0;

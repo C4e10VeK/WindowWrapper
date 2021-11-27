@@ -28,29 +28,23 @@ namespace winWrap
 
 		bool init(const std::string &title, const WindowParams &params) override;
 
-		bool isClosed() const override;
-		void close() override;
-
 		i32 getWidth() const override;
 		i32 getHeight() const override;
 
 		const ivec2 &getPosition() const override;
 		void setPosition(const ivec2 &position) override;
 
-		const WindowParams &getParams() const override;
-
-		const std::string &getTitle() const override;
 		void setTitle(const std::string &title) override;
 
-		void setResizable(bool resizable);
+		void setResizable(bool resizable) override;
 
 		bool pollEvent(InternalEvent &event) override;
 
 	private:
-		bool createSpecificPlatformWindow();
+		bool createSpecificPlatformWindow(const std::string &title, const WindowParams &params);
 		void init();
 
-		bool createWindowClass();
+		bool createWindowClass(const std::string &title);
 
 		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	};
