@@ -1,13 +1,15 @@
 #ifndef WINDOWWRAPPER_ENUMEVENT_HPP
 #define WINDOWWRAPPER_ENUMEVENT_HPP
 
+#include "Types.hpp"
 #include "VectorT.hpp"
 
 namespace winWrap
 {
-	enum class EventType
-	{	
-		KeyPressed,
+	enum class EventType : i32
+	{
+		Non = -1,
+		KeyPressed = 0,
 		KeyReleased,
 		Closed,
 		Resized,
@@ -19,7 +21,7 @@ namespace winWrap
 		MouseButtonReleased
 	};
 
-	enum class Key
+	enum class Key : i32
 	{
 		Non = -1,
 		Left = 0,
@@ -126,9 +128,9 @@ namespace winWrap
 
 	struct InternalEvent
 	{
-		EventType type;
+		EventType type{EventType::Non};
 		ivec2 size;
-		Key key;
+		Key key{Key::Non};
 
 		InternalEvent() = default;
 	};

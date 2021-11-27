@@ -7,7 +7,15 @@ namespace winWrap
 {
 	enum class Key;
 
-	Key specificPlatformKeyToKey(u32 key);
+	struct KeyInfo
+	{
+		u64 key;
+#if defined(_WIN32) || defined(__MINGW32__)
+		i64 lParam;
+#endif
+	};
+
+	Key specificPlatformKeyToKey(KeyInfo info);
 	i32 keyToSpecificPlatformKey(Key key);
 }
 

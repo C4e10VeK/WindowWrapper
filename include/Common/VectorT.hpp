@@ -24,6 +24,11 @@ namespace winWrap
 		{
 			return {x - v.x, y - v.y};
 		}
+
+		constexpr bool operator!=(const vec2<T> &v) const
+		{
+			return (x != v.x && y != v.y);
+		}
 	};
 
 	using ivec2 = vec2<i32>;

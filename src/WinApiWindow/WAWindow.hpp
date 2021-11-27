@@ -1,24 +1,40 @@
 #ifndef WINDOWWRAPPER_SRC_WINAPIWINDOW_WAWINDOW_HPP
 #define WINDOWWRAPPER_SRC_WINAPIWINDOW_WAWINDOW_HPP
 
+#include <queue>
+
 #include <windows.h>
 
 #include <Common/IPlatformWindow.hpp>
 #include <Common/Noncopybale.hpp>
 #include <Common/Event.hpp>
 #include <Common/WindowParams.hpp>
+#include <Common/InternalEvent.hpp>
 
 namespace winWrap
 {
-	class InternalEvent;
-
 	class PlatformWindow : noncopybale, public IPlatformWindow
 	{
 	private:
-		MSG m_winMsg;
-		HWND m_windowHandle;
-		HDC m_hdc;
-		HINSTANCE m_windowInstance;
+		MSG m_winMsg{};
+		HWND m_windowHandle{nullptr};
+		HDC m_hdc{nullptr};
+		HINSTANCE m_windowInstance{nullptr};
+
+		ivec2 m_lastSize;
+		bool m_resizing{true};
+
+		class InternalEventList final
+		{
+		private:
+			std::queue<InternalEvent> m_events;
+		public:
+			void push(const InternalEvent &event);
+			InternalEvent pop();
+			bool isEmpty() const;
+		};
+
+		InternalEventList m_eventList;
 
 	public:
 
@@ -42,11 +58,11 @@ namespace winWrap
 
 	private:
 		bool createSpecificPlatformWindow(const std::string &title, const WindowParams &params);
-		void init();
-
 		bool createWindowClass(const std::string &title);
 
-		static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		void windowProcess(UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+		static LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	};
 }
 

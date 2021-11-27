@@ -6,8 +6,6 @@ int main()
 {
 	winWrap::WindowParams params(800, 600, winWrap::ivec2(100), "", false);
 
-	winWrap::Event<winWrap::IWindow &, winWrap::Key, winWrap::EventType> a;
-
 //	winWrap::Window wnd("Hello World", params);
 	winWrap::Window wnd;
 	

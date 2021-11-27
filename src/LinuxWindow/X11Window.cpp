@@ -69,7 +69,7 @@ namespace winWrap
 					Key key = Key::Non;
 					for (int i = 0; i < 4; ++i)
 					{
-						key = specificPlatformKeyToKey(XLookupKeysym(&xEvent.xkey, i));
+						key = specificPlatformKeyToKey({XLookupKeysym(&xEvent.xkey, i)});
 						if (key != Key::Non)
 							break;
 					}
@@ -83,7 +83,7 @@ namespace winWrap
 					Key key = Key::Non;
 					for (int i = 0; i < 4; ++i)
 					{
-						key = specificPlatformKeyToKey(XLookupKeysym(&xEvent.xkey, i));
+						key = specificPlatformKeyToKey({XLookupKeysym(&xEvent.xkey, i)});
 						if (key != Key::Non)
 							break;
 					}
@@ -140,6 +140,7 @@ namespace winWrap
 
 		XSelectInput(m_display, m_xWindow, ExposureMask | KeyPressMask);
 		XMapWindow(m_display, m_xWindow);
+		XRaiseWindow(m_display, m_xWindow);
 
 		XStoreName(m_display, m_xWindow, title.c_str());
 

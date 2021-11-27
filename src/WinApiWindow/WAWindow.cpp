@@ -2,10 +2,27 @@
 
 #include <iostream>
 
-#include <Common/InternalEvent.hpp>
+#include "../Common/InputUtils.hpp"
 
 namespace winWrap
 {
+	void PlatformWindow::InternalEventList::push(const InternalEvent &event)
+	{
+		m_events.emplace(event);
+	}
+
+	InternalEvent PlatformWindow::InternalEventList::pop()
+	{
+		InternalEvent res = m_events.front();
+		m_events.pop();
+		return res;
+	}
+
+	bool PlatformWindow::InternalEventList::isEmpty() const
+	{
+		return m_events.empty();
+	}
+
 	PlatformWindow::~PlatformWindow()
 	{
 		DestroyWindow(m_windowHandle);
@@ -49,9 +66,27 @@ namespace winWrap
 		SetWindowPos(m_windowHandle, nullptr, position.x, position.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	}
 
-	bool PlatformWindow::pollEvent(InternalEvent &event)
+	void PlatformWindow::setResizable(bool resizable)
 	{
 
+	}
+
+	bool PlatformWindow::pollEvent(InternalEvent &event)
+	{
+		MSG msg{};
+		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+
+		if (!m_eventList.isEmpty())
+		{
+			event = m_eventList.pop();
+			return true;
+		}
+
+		return false;
 	}
 
 	bool PlatformWindow::createSpecificPlatformWindow(const std::string &title, const WindowParams &params)
@@ -61,7 +96,7 @@ namespace winWrap
 		if (m_windowInstance == nullptr)
 			return false;
 
-		if (!createWindowClass())
+		if (!createWindowClass(title))
 		{
 			std::cerr << "Error windowclass create: " << GetLastError() << std::endl;
 			return false;
@@ -85,6 +120,8 @@ namespace winWrap
 
 		SetWindowLongPtr(m_windowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
+		m_lastSize = ivec2(params.width, params.height);
+
 		ShowWindow(m_windowHandle, 1);
 
 		return true;
@@ -95,7 +132,7 @@ namespace winWrap
 		WNDCLASSEX wcex = { 0 };
 
 		wcex.cbSize = sizeof(wcex);
-		wcex.lpfnWndProc = &PlatformWindow::WindowProc;
+		wcex.lpfnWndProc = &PlatformWindow::windowProc;
 		wcex.cbWndExtra = 0;
 		wcex.cbClsExtra = 0;
 		wcex.hInstance = m_windowInstance;
@@ -108,32 +145,47 @@ namespace winWrap
 		return RegisterClassEx(&wcex);
 	}
 
-	LRESULT CALLBACK PlatformWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	void PlatformWindow::windowProcess(UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		switch (uMsg)
+		{
+			case WM_DESTROY:
+				{
+					InternalEvent event{};
+					event.type = EventType::Closed;
+					m_eventList.push(event);
+				}
+				break;
+			case WM_KEYDOWN:
+			case WM_SYSKEYDOWN:
+				{
+					InternalEvent event{};
+					event.type = EventType::KeyPressed;
+					event.key = specificPlatformKeyToKey({wParam, lParam});
+					m_eventList.push(event);
+				}
+				break;
+			case WM_KEYUP:
+			case WM_SYSKEYUP:
+				{
+					InternalEvent event{};
+					event.type = EventType::KeyReleased;
+					event.key = specificPlatformKeyToKey({wParam, lParam});
+					m_eventList.push(event);
+				}
+				break;
+			default:
+				break;
+		}
+	}
+
+	LRESULT CALLBACK PlatformWindow::windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		PlatformWindow *pWindow = reinterpret_cast<PlatformWindow *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
 		if (pWindow == nullptr) return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
-		switch (uMsg)
-		{
-			case WM_DESTROY:
-				{
-
-				}
-				break;
-			case WM_KEYDOWN:
-				{
-
-				}
-				break;
-			case WM_KEYUP:
-				{
-
-				}
-				break;
-			default:
-				return 0;
-		}
+		pWindow->windowProcess(uMsg, wParam, lParam);
 
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}

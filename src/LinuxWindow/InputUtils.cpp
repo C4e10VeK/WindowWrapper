@@ -5,9 +5,9 @@
 
 namespace winWrap
 {
-	Key specificPlatformKeyToKey(u32 key)
+	Key specificPlatformKeyToKey(KeyInfo info)
 	{
-		switch (key)
+		switch (info.key)
 		{
 			case XK_Left:		 return Key::Left;
 			case XK_Up:			 return Key::Up;
