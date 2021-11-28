@@ -45,20 +45,19 @@ namespace winWrap
 	{
 		RECT wRect;
 		GetWindowRect(m_windowHandle, &wRect);
-		return wRect.right;
+		return wRect.right - wRect.left;
 	}
 
 	i32 PlatformWindow::getHeight() const
 	{
 		RECT wRect;
 		GetWindowRect(m_windowHandle, &wRect);
-		return wRect.bottom;
+		return wRect.bottom - wRect.top;
 	}
 
-	const ivec2 &PlatformWindow::getPosition() const
+	ivec2 PlatformWindow::getPosition() const
 	{
-		static ivec2 o(0);
-		return o;
+		return ivec2(0);
 	}
 
 	void PlatformWindow::setPosition(const ivec2 &position)
@@ -119,8 +118,9 @@ namespace winWrap
 		}
 
 		SetWindowLongPtr(m_windowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+		m_callback = SetWindowLongPtr(m_windowHandle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&PlatformWindow::windowProc));
 
-		m_lastSize = ivec2(params.width, params.height);
+//		m_lastSize = ivec2(params.width, params.height);
 
 		ShowWindow(m_windowHandle, 1);
 
@@ -171,6 +171,14 @@ namespace winWrap
 					InternalEvent event{};
 					event.type = EventType::KeyReleased;
 					event.key = specificPlatformKeyToKey({wParam, lParam});
+					m_eventList.push(event);
+				}
+				break;
+			case WM_SIZE:
+				{
+					InternalEvent event;
+					event.type = EventType::Resized;
+					event.size = ivec2(getWidth(), getHeight());
 					m_eventList.push(event);
 				}
 				break;

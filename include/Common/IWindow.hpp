@@ -28,7 +28,7 @@ namespace winWrap
 		virtual i32 getWidth() const = 0;
 		virtual i32 getHeight() const = 0;
 
-		virtual const ivec2 &getPosition() const = 0;
+		virtual ivec2 getPosition() const = 0;
 		virtual void setPosition(const ivec2 &position) = 0;
 
 		virtual const std::string &getTitle() const = 0;

@@ -20,9 +20,7 @@ namespace winWrap
 		HWND m_windowHandle{nullptr};
 		HDC m_hdc{nullptr};
 		HINSTANCE m_windowInstance{nullptr};
-
-		ivec2 m_lastSize;
-		bool m_resizing{true};
+		LONG_PTR m_callback;
 
 		class InternalEventList final
 		{
@@ -47,7 +45,7 @@ namespace winWrap
 		i32 getWidth() const override;
 		i32 getHeight() const override;
 
-		const ivec2 &getPosition() const override;
+		ivec2 getPosition() const override;
 		void setPosition(const ivec2 &position) override;
 
 		void setTitle(const std::string &title) override;

@@ -35,10 +35,9 @@ namespace winWrap
 		return atr.height;
 	}
 
-	const ivec2 &PlatformWindow::getPosition() const
+	ivec2 PlatformWindow::getPosition() const
 	{
-		static ivec2 lol(0);
-		return lol;
+		return ivec2(0);
 	}
 
 	void PlatformWindow::setPosition(const ivec2 &position)
@@ -92,9 +91,16 @@ namespace winWrap
 					event.key = key;
 				}
 				return true;
+			case ConfigureNotify:
+				{
+					ivec2 size(xEvent.xconfigurerequest.width, xEvent.xconfigurerequest.height);
+					event.type = EventType::Resized;
+					event.size = size;
+				}
+				break;
 			case ClientMessage:
 					{
-						if (xEvent.xclient.data.l[0] == m_atomDeleteWindow)
+						if (xEvent.xclient.data.l[0] == m_atoms.atomDeleteWindow)
 						{
 							event.type = EventType::Closed;
 						}
@@ -116,10 +122,12 @@ namespace winWrap
 
 		XSetWindowAttributes atrs = {
 			.border_pixel = 0,
-			.event_mask = StructureNotifyMask | KeyPressMask | KeyReleaseMask |
-						  PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
-						  ExposureMask | FocusChangeMask | VisibilityChangeMask |
-						  EnterWindowMask | LeaveWindowMask | PropertyChangeMask,
+			.event_mask = FocusChangeMask      | ButtonPressMask     |
+						  ButtonReleaseMask    | ButtonMotionMask    |
+						  PointerMotionMask    | KeyPressMask        |
+						  KeyReleaseMask       | StructureNotifyMask |
+						  EnterWindowMask      | LeaveWindowMask     |
+						  VisibilityChangeMask | PropertyChangeMask,
 			.colormap = XCreateColormap(m_display, RootWindow(m_display, m_screen), DefaultVisual(m_display, m_screen), AllocNone)
 		};
 
@@ -135,8 +143,8 @@ namespace winWrap
 			&atrs
 		);
 
-		m_atomDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
-		XSetWMProtocols(m_display, m_xWindow, &m_atomDeleteWindow, 1);
+		m_atoms.atomDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
+		XSetWMProtocols(m_display, m_xWindow, &m_atoms.atomDeleteWindow, 1);
 
 		XSelectInput(m_display, m_xWindow, ExposureMask | KeyPressMask);
 		XMapWindow(m_display, m_xWindow);
@@ -150,6 +158,13 @@ namespace winWrap
 			return false;
 		}
 
+		initAtoms();
+
 		return true;
+	}
+
+	void PlatformWindow::initAtoms()
+	{
+		m_atoms.atomResizeWindow = XInternAtom(m_display, "WM_ACTION_RESIZE", false);
 	}
 }

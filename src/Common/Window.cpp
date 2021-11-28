@@ -12,13 +12,19 @@
 
 namespace winWrap
 {
-	Window::Window() : m_platformWindow(nullptr), m_isClosed(true), keyEvent(m_keyEvent)
-	{}
+	Window::Window()
+		: m_platformWindow(nullptr),
+	  	  m_isClosed(true),
+	  	  keyEvent(m_keyEvent),
+	  	  resizeEvent(m_resizeEvent),
+		  closeEvent(m_closeEvent) {}
 
 	Window::Window(std::string title, const WindowParams &params)
 		: m_title(std::move(title)),
 	  	  m_isClosed(false),
-		  keyEvent(m_keyEvent)
+		  keyEvent(m_keyEvent),
+		  resizeEvent(m_resizeEvent),
+		  closeEvent(m_closeEvent)
 	{
 		m_platformWindow = createSpecificPlatformWindow();
 		m_platformWindow->init(title, params);	
@@ -44,6 +50,7 @@ namespace winWrap
 
 	void Window::close()
 	{
+		m_closeEvent();
 		m_isClosed = true;
 		if (m_platformWindow != nullptr)
 		{
@@ -61,7 +68,7 @@ namespace winWrap
 		return m_platformWindow != nullptr ? m_platformWindow->getHeight() : 0;
 	}
 
-	const ivec2 &Window::getPosition() const
+	ivec2 Window::getPosition() const
 	{
 		static ivec2 err(0);
 		return m_platformWindow != nullptr ? m_platformWindow->getPosition() : err;
@@ -104,6 +111,9 @@ namespace winWrap
 					break;
 				case EventType::KeyReleased:
 					m_keyEvent(*this, event.key, EventType::KeyReleased);
+					break;
+				case EventType::Resized:
+					m_resizeEvent(*this, event.size);
 					break;
 				case EventType::Closed:
 					close();

@@ -18,6 +18,9 @@ namespace winWrap
 	{
 	private:
 		using KeyEvent = Event<IWindow &, Key, EventType>;
+		using ResizeEvent = Event<IWindow &, ivec2>;
+		using CloseEvent = Event<>;
+
 		std::unique_ptr<IPlatformWindow> m_platformWindow;
 
 		std::string m_title;
@@ -25,8 +28,12 @@ namespace winWrap
 		bool m_isClosed;
 
 		KeyEvent m_keyEvent;
+		ResizeEvent m_resizeEvent;
+		CloseEvent m_closeEvent;
 	public:
 		KeyEvent::IType &keyEvent;
+		ResizeEvent::IType &resizeEvent;
+		CloseEvent::IType &closeEvent;
 
 		Window();
 		Window(std::string title, const WindowParams &params);
@@ -40,7 +47,7 @@ namespace winWrap
 		i32 getWidth() const override;
 
 		void setPosition(const ivec2 &position) override;
-		const ivec2 & getPosition() const override;
+		ivec2 getPosition() const override;
 
 		const std::string & getTitle() const override;
 		void setTitle(const std::string &title) override;

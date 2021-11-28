@@ -20,7 +20,14 @@ namespace winWrap
 		::Window m_xWindow{};
 		Display *m_display{};
 		int m_screen{};
-		Atom m_atomDeleteWindow{};
+
+		struct Atoms
+		{
+			Atom atomDeleteWindow;
+			Atom atomResizeWindow;
+		};
+
+		Atoms m_atoms;
 
 		friend class Window;
 	public:	
@@ -33,7 +40,7 @@ namespace winWrap
 		i32 getWidth() const override;
 		i32 getHeight() const override;
 
-		const ivec2 &getPosition() const override;
+		ivec2 getPosition() const override;
 		void setPosition(const ivec2 &position) override;
 
 		void setTitle(const std::string &title) override;
@@ -43,6 +50,8 @@ namespace winWrap
 		bool pollEvent(InternalEvent &event) override;
 	private:
 		bool createSpecificPlatformWindow(const std::string &title, const WindowParams &params);
+
+		void initAtoms();
 	};
 }
 

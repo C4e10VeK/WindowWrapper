@@ -21,6 +21,16 @@ int main()
 			sender.close();
 	};
 
+	wnd.resizeEvent += [](winWrap::IWindow &sender, winWrap::ivec2 size)
+	{
+		std::cerr << "New size: width=" << size.x << ", height=" << size.y << std::endl;
+	};
+
+	wnd.closeEvent += []()
+	{
+		std::cout << "Closing" << std::endl;
+	};
+
 	while (!wnd.isClosed())
 	{
 		wnd.pollEvent();
