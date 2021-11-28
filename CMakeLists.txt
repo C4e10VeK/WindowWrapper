@@ -23,11 +23,7 @@ elseif(MINGW)
 	message(STATUS "MinGW compiler")
 	set(LINK_OPTIONS -static)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-	if (CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
-		message(STATUS "Clang windows compiler")
-	elseif (CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "GNU")
-		message(STATUS "Clang linux compiler")
-	endif()
+	message(STATUS "Clang compiler")
 endif()
 
 file(GLOB_RECURSE HEADER_FILES
