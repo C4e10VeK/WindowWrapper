@@ -9,7 +9,8 @@ namespace winWrap
 	template <typename T>
 	struct vec2;
 
-	using Size = vec2<i32>;
+	using ivec2 = vec2<i32>;
+	using Size = ivec2;
 
 	struct InternalEvent;
 	struct WindowParams;
@@ -26,8 +27,8 @@ namespace winWrap
 
 		virtual Size getSize() const = 0;
 
-		virtual vec2<i32> getPosition() const = 0;
-		virtual void setPosition(const vec2<i32> &position) = 0;
+		virtual ivec2 getPosition() const = 0;
+		virtual void setPosition(const ivec2 &position) = 0;
 
 		virtual void setTitle(const std::string &title) = 0;
 
