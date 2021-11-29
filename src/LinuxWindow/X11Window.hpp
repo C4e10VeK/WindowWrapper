@@ -39,12 +39,12 @@ namespace winWrap
 
 		bool init(const std::string &title, const WindowParams &params) override;
 
-		i32 getWidth() const override;
-		i32 getHeight() const override;
+		[[nodiscard]] i32 getWidth() const override;
+		[[nodiscard]] i32 getHeight() const override;
 
-		Size getSize() const override;
+		[[nodiscard]] Size getSize() const override;
 
-		ivec2 getPosition() const override;
+		[[nodiscard]] ivec2 getPosition() const override;
 		void setPosition(const ivec2 &position) override;
 
 		void setTitle(const std::string &title) override;

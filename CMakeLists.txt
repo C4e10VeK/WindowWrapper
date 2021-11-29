@@ -45,8 +45,8 @@ endif ()
 add_executable(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/main.cpp ${SOURCE_FILES} ${HEADER_FILES})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
-target_compile_options(${PROJECT_NAME} PRIVATE -fno-omit-frame-pointer -fno-omit-frame-pointer)
-target_link_options(${PROJECT_NAME} PRIVATE ${LINK_OPTIONS} -fno-omit-frame-pointer -fno-omit-frame-pointer)
+target_compile_options(${PROJECT_NAME} PRIVATE -fno-omit-frame-pointer -fsanitize=address)
+target_link_options(${PROJECT_NAME} PRIVATE ${LINK_OPTIONS} -fno-omit-frame-pointer -fsanitize=address)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES} "${CMAKE_SOURCE_DIR}/include")
