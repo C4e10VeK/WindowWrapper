@@ -5,7 +5,7 @@
 ## TODO
 
 - [X] Cross-platform window creation (Windows, Linux)
-- [ ] Finish window params implementation 
+- [X] Finish window params implementation 
 - [ ] Finish default window method
 - [ ] Add event implementation
 - [ ] Add vulkan surface creation
