@@ -15,14 +15,16 @@ namespace winWrap
 	Window::Window()
 		: m_platformWindow(nullptr),
 	  	  m_isClosed(true),
-	  	  keyEvent(m_keyEvent),
+	  	  keyPressed(m_keyPressed),
+	  	  keyReleased(m_keyReleased),
 	  	  resizeEvent(m_resizeEvent),
 		  closeEvent(m_closeEvent) {}
 
 	Window::Window(std::string title, const WindowParams &params)
 		: m_title(std::move(title)),
 	  	  m_isClosed(false),
-		  keyEvent(m_keyEvent),
+		  keyPressed(m_keyPressed),
+		  keyReleased(m_keyReleased),
 		  resizeEvent(m_resizeEvent),
 		  closeEvent(m_closeEvent)
 	{
@@ -68,6 +70,11 @@ namespace winWrap
 		return m_platformWindow != nullptr ? m_platformWindow->getHeight() : 0;
 	}
 
+	Size Window::getSize() const
+	{
+		return m_platformWindow->getSize();
+	}
+
 	ivec2 Window::getPosition() const
 	{
 		static ivec2 err(0);
@@ -107,10 +114,10 @@ namespace winWrap
 			switch (event.type)
 			{
 				case EventType::KeyPressed:
-					m_keyEvent(*this, event.key, EventType::KeyPressed);
+					m_keyPressed(*this, event.key);
 					break;
 				case EventType::KeyReleased:
-					m_keyEvent(*this, event.key, EventType::KeyReleased);
+					m_keyReleased(*this, event.key);
 					break;
 				case EventType::Resized:
 					m_resizeEvent(*this, event.size);

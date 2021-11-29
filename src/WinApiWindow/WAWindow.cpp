@@ -55,6 +55,13 @@ namespace winWrap
 		return wRect.bottom - wRect.top;
 	}
 
+	Size PlatformWindow::getSize() const
+	{
+		RECT wRect;
+		GetWindowRect(m_windowHandle, &wRect);
+		return {wRect.right - wRect.left, wRect.bottom - wRect.top};
+	}
+
 	ivec2 PlatformWindow::getPosition() const
 	{
 		return ivec2(0);
@@ -101,13 +108,18 @@ namespace winWrap
 			return false;
 		}
 
+		DWORD dwStyle = WS_OVERLAPPEDWINDOW;
+
+		if (!params.resizeable)
+			dwStyle ^= WS_THICKFRAME;
+
 		m_windowHandle = CreateWindowExA(
 				0,
 				title.c_str(),
 				title.c_str(),
-				WS_OVERLAPPEDWINDOW,
+				dwStyle,
 				params.position.x, params.position.y,
-				params.width, params.height,
+				params.size.width, params.size.height,
 				nullptr, nullptr, m_windowInstance, nullptr
 			);
 

@@ -3,33 +3,29 @@
 
 #include "Types.hpp"
 #include "VectorT.hpp"
-#include <filesystem>
-#include <utility>
 
 namespace winWrap
 {
 	struct WindowParams
 	{
-		i32 width;
-		i32 height;
+		Size size;
 		ivec2 position;
-
-		std::filesystem::path icon;
-
 		bool resizeable;
+
+		explicit WindowParams(
+				Size _size = {},
+				ivec2 _position = {},
+				bool _resizeable = true
+			) : size(_size),
+			  	position(_position),
+			  	resizeable(_resizeable) { }
 
 		explicit WindowParams(
 				i32 _width = {},
 				i32 _height = {},
 				ivec2 _position = {},
-				std::filesystem::path _icon = "",
 				bool _resizeable = true
-			)
-			: width(_width),
-			  height(_height),
-			  position(_position),
-			  icon(std::move(_icon)),
-			  resizeable(_resizeable) { }
+			) : WindowParams({_width, _height}, _position, _resizeable) { }
 	};
 }
 

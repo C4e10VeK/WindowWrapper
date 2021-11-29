@@ -11,6 +11,8 @@ namespace winWrap
 	template<typename T> struct vec2;
 	using ivec2 = vec2<i32>;
 
+	using Size = ivec2;
+
 	struct WindowParams;
 
 	class IPlatformWindow;
@@ -27,6 +29,8 @@ namespace winWrap
 
 		virtual i32 getWidth() const = 0;
 		virtual i32 getHeight() const = 0;
+
+		virtual Size getSize() const = 0;
 
 		virtual ivec2 getPosition() const = 0;
 		virtual void setPosition(const ivec2 &position) = 0;

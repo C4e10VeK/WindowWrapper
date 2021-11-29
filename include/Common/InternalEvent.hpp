@@ -129,7 +129,7 @@ namespace winWrap
 	struct InternalEvent
 	{
 		EventType type{EventType::Non};
-		ivec2 size;
+		Size size;
 		Key key{Key::Non};
 
 		InternalEvent() = default;

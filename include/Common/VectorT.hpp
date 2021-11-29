@@ -8,8 +8,17 @@ namespace winWrap
 	template <typename T>
 	struct vec2
 	{
-		T x;
-		T y;
+		union
+		{
+			T x;
+			T width;
+		};
+
+		union
+		{
+			T y;
+			T height;
+		};
 
 		vec2() = default;
 		explicit vec2(T s) : x(s), y(s) { }
@@ -73,6 +82,7 @@ namespace winWrap
 	}
 
 	using ivec2 = vec2<i32>;
+	using Size = ivec2;
 	using uvec2 = vec2<u32>;
 	using fvec2 = vec2<float>;
 }

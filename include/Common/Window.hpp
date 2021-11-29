@@ -17,8 +17,9 @@ namespace winWrap
 	class Window : noncopybale, public IWindow
 	{
 	private:
-		using KeyEvent = Event<IWindow &, Key, EventType>;
-		using ResizeEvent = Event<IWindow &, ivec2>;
+		using KeyPressedEvent = Event<IWindow &, Key>;
+		using KeyReleasedEvent = Event<IWindow &, Key>;
+		using ResizeEvent = Event<IWindow &, Size>;
 		using CloseEvent = Event<>;
 
 		std::unique_ptr<IPlatformWindow> m_platformWindow;
@@ -27,11 +28,13 @@ namespace winWrap
 
 		bool m_isClosed;
 
-		KeyEvent m_keyEvent;
+		KeyPressedEvent m_keyPressed;
+		KeyReleasedEvent m_keyReleased;
 		ResizeEvent m_resizeEvent;
 		CloseEvent m_closeEvent;
 	public:
-		KeyEvent::IType &keyEvent;
+		KeyPressedEvent::IType &keyPressed;
+		KeyReleasedEvent::IType &keyReleased;
 		ResizeEvent::IType &resizeEvent;
 		CloseEvent::IType &closeEvent;
 
@@ -45,6 +48,8 @@ namespace winWrap
 
 		i32 getHeight() const override;
 		i32 getWidth() const override;
+
+		Size getSize() const override;
 
 		void setPosition(const ivec2 &position) override;
 		ivec2 getPosition() const override;

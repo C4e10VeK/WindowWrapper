@@ -1,5 +1,6 @@
 #include "X11Window.hpp"
 #include <utility>
+#include <iostream>
 
 #include <Common/InternalEvent.hpp>
 
@@ -35,6 +36,13 @@ namespace winWrap
 		return atr.height;
 	}
 
+	Size PlatformWindow::getSize() const
+	{
+		XWindowAttributes atr;
+		XGetWindowAttributes(m_display, m_xWindow, &atr);
+		return {atr.width, atr.height};
+	}
+
 	ivec2 PlatformWindow::getPosition() const
 	{
 		return ivec2(0);
@@ -63,6 +71,11 @@ namespace winWrap
 
 		switch (xEvent.type)
 		{
+			case Expose:
+				{
+
+				}
+				break;
 			case KeyPress:
 				{
 					Key key = Key::Non;
@@ -117,40 +130,32 @@ namespace winWrap
 		if (m_display == nullptr)
 			return false;
 
+		initAtoms();
 
 		m_screen = DefaultScreen(m_display);
 
-		XSetWindowAttributes atrs = {
+		XSetWindowAttributes atr = {
 			.border_pixel = 0,
 			.event_mask = FocusChangeMask      | ButtonPressMask     |
 						  ButtonReleaseMask    | ButtonMotionMask    |
 						  PointerMotionMask    | KeyPressMask        |
 						  KeyReleaseMask       | StructureNotifyMask |
 						  EnterWindowMask      | LeaveWindowMask     |
-						  VisibilityChangeMask | PropertyChangeMask,
+						  VisibilityChangeMask | PropertyChangeMask  |
+						  SubstructureNotifyMask,
 			.colormap = XCreateColormap(m_display, RootWindow(m_display, m_screen), DefaultVisual(m_display, m_screen), AllocNone)
 		};
 
 		m_xWindow = XCreateWindow(
 			m_display,
-			RootWindow(m_display, m_screen), params.position.x, params.position.y, params.width,
-			params.height,
+			RootWindow(m_display, m_screen), params.position.x, params.position.y, params.size.width,
+			params.size.height,
 			0,
 			DefaultDepth(m_display, m_screen),
 			InputOutput,
 			DefaultVisual(m_display, m_screen),
 			CWColormap | CWEventMask | CWBorderPixel,
-			&atrs
-		);
-
-		m_atoms.atomDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
-		XSetWMProtocols(m_display, m_xWindow, &m_atoms.atomDeleteWindow, 1);
-
-		XSelectInput(m_display, m_xWindow, ExposureMask | KeyPressMask);
-		XMapWindow(m_display, m_xWindow);
-		XRaiseWindow(m_display, m_xWindow);
-
-		XStoreName(m_display, m_xWindow, title.c_str());
+			&atr);
 
 		if (!m_xWindow)
 		{
@@ -158,13 +163,38 @@ namespace winWrap
 			return false;
 		}
 
-		initAtoms();
+		XSetWMProtocols(m_display, m_xWindow, &m_atoms.atomDeleteWindow, 1);
+
+		if (!params.resizeable)
+		{
+			XSizeHints *sizeHints = XAllocSizeHints();
+
+			sizeHints->flags = PMaxSize | PMinSize | USPosition;
+			sizeHints->min_height = params.size.height;
+			sizeHints->max_height = params.size.height;
+			sizeHints->min_width = params.size.width;
+			sizeHints->max_width = params.size.width;
+			sizeHints->x = params.position.x;
+			sizeHints->y = params.position.y;
+
+			XSetWMNormalHints(m_display, m_xWindow, sizeHints);
+			XFree(sizeHints);
+		}
+
+		XSelectInput(m_display, m_xWindow, ExposureMask | KeyPressMask);
+		XMapWindow(m_display, m_xWindow);
+		XRaiseWindow(m_display, m_xWindow);
+
+		XStoreName(m_display, m_xWindow, title.c_str());
 
 		return true;
 	}
 
 	void PlatformWindow::initAtoms()
 	{
+		m_atoms.atomDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", false);
 		m_atoms.atomResizeWindow = XInternAtom(m_display, "WM_ACTION_RESIZE", false);
+		m_atoms.atomSize = XInternAtom(m_display, "WM_SIZE_HINTS", false);
+		m_atoms.atomWMIcon = XInternAtom(m_display, "_NET_WM_ICON", false);
 	}
 }

@@ -4,7 +4,7 @@
 
 int main()
 {
-	winWrap::WindowParams params(800, 600, winWrap::ivec2(100), "", false);
+	winWrap::WindowParams params(800, 600, winWrap::ivec2(100), false);
 
 //	winWrap::Window wnd("Hello World", params);
 	winWrap::Window wnd;
@@ -15,15 +15,15 @@ int main()
 		std::abort();
 	}
 
-	wnd.keyEvent += [](winWrap::IWindow &sender, winWrap::Key key, winWrap::EventType type)
+	wnd.keyPressed += [](winWrap::IWindow &sender, winWrap::Key key)
 	{
 		if (key == winWrap::Key::Escape)
 			sender.close();
 	};
 
-	wnd.resizeEvent += [](winWrap::IWindow &sender, winWrap::ivec2 size)
+	wnd.resizeEvent += [](winWrap::IWindow &sender, winWrap::Size size)
 	{
-		std::cerr << "New size: width=" << size.x << ", height=" << size.y << std::endl;
+		std::cerr << "New size: width=" << size.width << ", height=" << size.height << std::endl;
 	};
 
 	wnd.closeEvent += []()
