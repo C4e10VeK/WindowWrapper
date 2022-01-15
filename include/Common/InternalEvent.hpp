@@ -2,7 +2,7 @@
 #define WINDOWWRAPPER_ENUMEVENT_HPP
 
 #include "Types.hpp"
-#include "VectorT.hpp"
+#include "Vector.hpp"
 
 namespace winWrap
 {

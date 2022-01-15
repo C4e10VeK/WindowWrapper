@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "../Common/InputUtils.hpp"
+#include "../Common/VulkanUtils.hpp"
 
 namespace winWrap
 {
@@ -93,6 +94,11 @@ namespace winWrap
 		}
 
 		return false;
+	}
+
+	bool PlatformWindow::createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface)
+	{
+		return createVulkanSurfacePr(instance, *this, surface);
 	}
 
 	bool PlatformWindow::createSpecificPlatformWindow(const std::string &title, const WindowParams &params)

@@ -131,6 +131,11 @@ namespace winWrap
 		}
 	}
 
+	bool Window::createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface)
+	{
+		return m_platformWindow->createVulkanSurface(instance, surface);
+	}
+
 	std::unique_ptr<IPlatformWindow> Window::createSpecificPlatformWindow()
 	{
 		return std::make_unique<PlatformWindow>();

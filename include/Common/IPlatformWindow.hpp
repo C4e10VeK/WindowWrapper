@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Types.hpp"
+#include "Vulkan.hpp"
 
 namespace winWrap
 {
@@ -35,6 +36,8 @@ namespace winWrap
 		virtual void setResizable(bool resizable) = 0;
 
 		virtual bool pollEvent(InternalEvent &event) = 0;
+
+		virtual bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface) = 0;
 	};	
 }
 

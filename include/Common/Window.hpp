@@ -6,6 +6,7 @@
 
 #include "Noncopybale.hpp"
 #include "IWindow.hpp"
+#include "Vulkan.hpp"
 
 #include "IPlatformWindow.hpp"
 #include "InternalEvent.hpp"
@@ -60,6 +61,8 @@ namespace winWrap
 		WindowParams getParams() override;
 
 		void pollEvent() override;
+
+		bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface);
 
 	private:
 		static std::unique_ptr<IPlatformWindow> createSpecificPlatformWindow();

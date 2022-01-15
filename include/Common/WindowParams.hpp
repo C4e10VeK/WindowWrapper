@@ -2,7 +2,7 @@
 #define WINDOWWRAPPER_WINDOWPARAMS_HPP
 
 #include "Types.hpp"
-#include "VectorT.hpp"
+#include "Vector.hpp"
 
 namespace winWrap
 {

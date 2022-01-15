@@ -34,6 +34,7 @@ namespace winWrap
 
 		InternalEventList m_eventList;
 
+		friend bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface);
 	public:
 
 		PlatformWindow() = default;
@@ -56,6 +57,7 @@ namespace winWrap
 
 		bool pollEvent(InternalEvent &event) override;
 
+		bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface) override;
 	private:
 		bool createSpecificPlatformWindow(const std::string &title, const WindowParams &params);
 		bool createWindowClass(const std::string &title);
