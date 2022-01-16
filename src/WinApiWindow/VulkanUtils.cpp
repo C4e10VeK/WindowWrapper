@@ -130,7 +130,7 @@ namespace winWrap
 		return (vkCreateWin32SurfaceKHR(instance, &info, nullptr, &surface) == VK_SUCCESS);
 	}
 
-	std::array<std::string, 2> getRequiredExtensions()
+	std::vector<const char*> getRequiredExtensions()
 	{
 		return {"VK_KHR_surface", "VK_KHR_win32_surface"};
 	}

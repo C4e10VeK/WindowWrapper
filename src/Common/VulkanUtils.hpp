@@ -1,8 +1,7 @@
 #ifndef WINDOWWRAPPER_VULKAN_UTILS_HPP
 #define WINDOWWRAPPER_VULKAN_UTILS_HPP
 
-#include <array>
-#include <string>
+#include <vector>
 
 #include <Common/Types.hpp>
 #include <Common/Vulkan.hpp>
@@ -86,7 +85,7 @@ namespace winWrap
 
 	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface);
 
-	std::array<std::string, 2> getRequiredExtensions();
+	std::vector<const char *> getRequiredExtensions();
 } // namespace winwrap
 
 

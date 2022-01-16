@@ -25,16 +25,16 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 endif()
 
 file(GLOB_RECURSE HEADER_FILES
-		"${CMAKE_SOURCE_DIR}/include/*.hpp"
-		"${CMAKE_SOURCE_DIR}/src/Common/*.hpp"
-		"${CMAKE_SOURCE_DIR}/src/${PLATFORM_PATH}/*.hpp")
+		"${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/src/Common/*.hpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/src/${PLATFORM_PATH}/*.hpp")
 
 file(GLOB_RECURSE SOURCE_FILES
-		"${CMAKE_SOURCE_DIR}/src/Common/*.cpp"
-		"${CMAKE_SOURCE_DIR}/src/${PLATFORM_PATH}/*.cpp")
+		"${CMAKE_CURRENT_SOURCE_DIR}/src/Common/*.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/src/${PLATFORM_PATH}/*.cpp")
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBS})
-target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES} "${CMAKE_SOURCE_DIR}/include")
+target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES} "${CMAKE_CURRENT_SOURCE_DIR}/include")

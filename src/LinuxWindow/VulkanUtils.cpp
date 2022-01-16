@@ -133,7 +133,7 @@ namespace winWrap
 		return (vkCreateXlibSurfaceKHR(instance, &info, nullptr, &surface) == VK_SUCCESS);
 	}
 
-	std::array<std::string, 2> getRequiredExtensions()
+	std::vector<const char *> getRequiredExtensions()
 	{
 		return {"VK_KHR_surface", "VK_KHR_xlib_surface"};
 	}
