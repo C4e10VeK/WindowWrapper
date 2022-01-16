@@ -100,41 +100,6 @@ namespace winWrap
 
 			return hasSurface && hasPlatformSurface;
 		}
-
-		std::array<std::string, 2> getRequiredExtension()
-		{
-			std::array<std::string, 2> res;
-
-			if (m_vkLibrary == nullptr)
-				return {"", ""};
-
-			u32 count;
-			std::vector<VkExtensionProperties> properties;
-
-			VkResult err = vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr);
-			if (err)
-			{
-				FreeLibrary(m_vkLibrary);
-				m_vkLibrary = nullptr;
-			}
-
-			err = vkEnumerateInstanceExtensionProperties(nullptr, &count, properties.data());
-			if (err)
-			{
-				FreeLibrary(m_vkLibrary);
-				m_vkLibrary = nullptr;
-			}
-
-			for (auto &p : properties)
-			{
-				if (!std::strcmp(p.extensionName, "VK_KHR_surface"))
-					res[0] = p.extensionName;
-				if (!std::strcmp(p.extensionName, "VK_KHR_win32_surface"))
-					res[1] = p.extensionName;
-			}
-
-			return res;
-		}
 	};
 	
 	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface)
@@ -163,9 +128,6 @@ namespace winWrap
 
 	std::array<std::string, 2> getRequiredExtensions()
 	{
-		VulkanWrapper vk;
-		vk.loadLib();
-
-		return vk.getRequiredExtension();
+		return {"VK_KHR_surface", "VK_KHR_win32_surface"};
 	}
 } // namespace winWrap
