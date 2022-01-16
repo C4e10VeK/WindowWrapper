@@ -64,6 +64,7 @@ namespace winWrap
 
 		bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface);
 
+		static std::array<std::string, 2> getVulkanExtension();
 	private:
 		static std::unique_ptr<IPlatformWindow> createSpecificPlatformWindow();
 	};

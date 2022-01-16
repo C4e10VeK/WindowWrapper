@@ -10,6 +10,8 @@
 #include <Common/InternalEvent.hpp>
 #include <iostream>
 
+#include "VulkanUtils.hpp"
+
 namespace winWrap
 {
 	Window::Window()
@@ -134,6 +136,11 @@ namespace winWrap
 	bool Window::createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface)
 	{
 		return m_platformWindow->createVulkanSurface(instance, surface);
+	}
+
+	std::array<std::string, 2> Window::getVulkanExtension()
+	{
+		return getRequiredExtensions();
 	}
 
 	std::unique_ptr<IPlatformWindow> Window::createSpecificPlatformWindow()

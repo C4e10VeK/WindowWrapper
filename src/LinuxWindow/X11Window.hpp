@@ -32,6 +32,7 @@ namespace winWrap
 		Atoms m_atoms;
 
 		friend class Window;
+		friend bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface);
 	public:	
 		PlatformWindow() = default;
 
@@ -52,6 +53,8 @@ namespace winWrap
 		void setResizable(bool resizable) override;
 
 		bool pollEvent(InternalEvent &event) override;
+
+		bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface) override;
 	private:
 		bool createSpecificPlatformWindow(const std::string &title, const WindowParams &params);
 

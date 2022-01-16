@@ -8,5 +8,4 @@
 - [X] Finish window params implementation 
 - [ ] Finish default window method
 - [ ] Add event implementation
-- [ ] Add vulkan surface creation
-- [ ] Callbacks or Events?
+- [X] Add vulkan surface creation

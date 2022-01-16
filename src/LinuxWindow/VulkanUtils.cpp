@@ -1,23 +1,24 @@
 #include "../Common/VulkanUtils.hpp"
-#include "WAWindow.hpp"
+#include "X11Window.hpp"
+#include <dlfcn.h>
 #include <cstring>
 
-struct VkWin32SurfaceCreateInfoKHR {
-	VkStructureType					sType;
-	const void*						pNext;
-	winWrap::u32					flags;
-	HINSTANCE						hinstance;
-	HWND							hwnd;
+struct VkXlibSurfaceCreateInfoKHR {
+	VkStructureType				   sType;
+	const void*					   pNext;
+	winWrap::u32 				   flags;
+	Display*					   dpy;
+	Window						   window;
 };
 
-using PFN_vkCreateWin32SurfaceKHR = VkResult (VK_API_CALL *)(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+using PFN_vkCreateXlibSurfaceKHR = VkResult (VK_API_CALL *)(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 
 namespace winWrap
 {
 	class VulkanWrapper
 	{
 	private:
-		HMODULE m_vkLibrary;
+		void *m_vkLibrary;
 	public:
 		PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
 		PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
@@ -25,30 +26,30 @@ namespace winWrap
 		VulkanWrapper()
 			: m_vkLibrary(nullptr),
 			  vkGetInstanceProcAddr(nullptr),
-			  vkEnumerateInstanceExtensionProperties(nullptr) {}
+			  vkEnumerateInstanceExtensionProperties(nullptr) { }
 
 		~VulkanWrapper()
 		{
-			FreeLibrary(m_vkLibrary);
+			closeLib();
 		}
 
 		bool loadLib()
 		{
-			if (m_vkLibrary) return true;
+			if (m_vkLibrary)
+				return true;
 
-			m_vkLibrary = LoadLibrary("vulkan-1.dll");
-
+			m_vkLibrary = dlopen("libvulkan.so.1", RTLD_LAZY | RTLD_LOCAL);
 			if (m_vkLibrary == nullptr)
 				return false;
 
-			vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>(GetProcAddress(m_vkLibrary, "vkGetInstanceProcAddr"));
+			vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>( dlsym(m_vkLibrary, "vkGetInstanceProcAddr"));
 			if (vkGetInstanceProcAddr == nullptr)
 			{
 				closeLib();
 				return false;
 			}
 
-			vkEnumerateInstanceExtensionProperties = reinterpret_cast<PFN_vkEnumerateInstanceExtensionProperties>(vkGetInstanceProcAddr(nullptr, "vkEnumerateInstanceExtensionProperties"));
+			vkEnumerateInstanceExtensionProperties = reinterpret_cast<PFN_vkEnumerateInstanceExtensionProperties>(dlsym(m_vkLibrary, "vkEnumerateInstanceExtensionProperties"));
 			if (vkEnumerateInstanceExtensionProperties == nullptr)
 			{
 				closeLib();
@@ -62,7 +63,7 @@ namespace winWrap
 		{
 			if (m_vkLibrary == nullptr)
 				return false;
-
+			
 			u32 count;
 			std::vector<VkExtensionProperties> properties;
 
@@ -75,7 +76,7 @@ namespace winWrap
 
 			properties.resize(count);
 
-			err = vkEnumerateInstanceExtensionProperties(nullptr, &count, properties.data());
+			err =vkEnumerateInstanceExtensionProperties(nullptr, &count, properties.data());
 			if (err)
 			{
 				closeLib();
@@ -86,13 +87,15 @@ namespace winWrap
 			bool hasPlatformSurface = false;
 			for (auto &p : properties)
 			{
-				if (!strcmp(p.extensionName, "VK_KHR_surface"))
+				if (!std::strcmp(p.extensionName, "VK_KHR_surface"))
 				{
 					hasSurface = true;
 					continue;
 				}
-				if (!strcmp(p.extensionName, "VK_KHR_win32_surface"))
+				if (!std::strcmp(p.extensionName, "VK_KHR_xlib_surface"))
+				{
 					hasPlatformSurface = true;
+				}
 			}
 
 			return hasSurface && hasPlatformSurface;
@@ -101,37 +104,38 @@ namespace winWrap
 		void closeLib()
 		{
 			if (m_vkLibrary == nullptr) return;
-			FreeLibrary(m_vkLibrary);
+			dlclose(m_vkLibrary);
 			m_vkLibrary = nullptr;
 		}
+
 	};
-	
+
 	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface)
 	{
 		VulkanWrapper vk;
 
 		if (!vk.loadLib())
 			return false;
-		
+
 		if (!vk.isAvailable())
 			return false;
 
-		VkWin32SurfaceCreateInfoKHR info = {
-			.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
-			.hinstance = window.m_windowInstance,
-			.hwnd = window.m_windowHandle
+		VkXlibSurfaceCreateInfoKHR info = {
+			.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,
+			.dpy = window.m_display,
+			.window = window.m_xWindow
 		};
 
-		auto vkCreateWin32SurfaceKHR = reinterpret_cast<PFN_vkCreateWin32SurfaceKHR>(vk.vkGetInstanceProcAddr(instance, "vkCreateWin32SurfaceKHR"));
-
-		if (vkCreateWin32SurfaceKHR == nullptr)
+		auto vkCreateXlibSurfaceKHR = reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(vk.vkGetInstanceProcAddr(instance, "vkCreateXlibSurfaceKHR"));
+		if (vkCreateXlibSurfaceKHR == nullptr)
 			return false;
 
-		return (vkCreateWin32SurfaceKHR(instance, &info, nullptr, &surface) == VK_SUCCESS);
+		return (vkCreateXlibSurfaceKHR(instance, &info, nullptr, &surface) == VK_SUCCESS);
 	}
 
 	std::array<std::string, 2> getRequiredExtensions()
 	{
-		return {"VK_KHR_surface", "VK_KHR_win32_surface"};
+		return {"VK_KHR_surface", "VK_KHR_xlib_surface"};
 	}
-} // namespace winWrap
+}
+
