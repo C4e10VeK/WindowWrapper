@@ -48,7 +48,5 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 target_compile_options(${PROJECT_NAME} PRIVATE -fno-omit-frame-pointer -fsanitize=address)
 target_link_options(${PROJECT_NAME} PRIVATE ${LINK_OPTIONS} -fno-omit-frame-pointer -fsanitize=address)
 
-find_package(Vulkan REQUIRED)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBS} ${Vulkan_LIBRARIES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES} "${CMAKE_SOURCE_DIR}/include" ${Vulkan_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES} "${CMAKE_SOURCE_DIR}/include")
