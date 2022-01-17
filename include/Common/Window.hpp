@@ -42,10 +42,14 @@ namespace winWrap
 		Window();
 		Window(std::string title, const WindowParams &params);
 
+		~Window();
+
 		bool init(const std::string &title, const WindowParams &params) override;
 
 		[[nodiscard]] bool isClosed() const override;
 		void close() override;
+
+		void destroy();
 
 		[[nodiscard]] i32 getHeight() const override;
 		[[nodiscard]] i32 getWidth() const override;

@@ -34,9 +34,15 @@ namespace winWrap
 		m_platformWindow->init(title, params);	
 	}
 
+	Window::~Window()
+	{
+		destroy();
+	}
+
 	bool Window::init(const std::string &title, const WindowParams &params)
 	{
 		close();
+		destroy();
 
 		m_title = title;
 		m_isClosed = false;
@@ -56,10 +62,12 @@ namespace winWrap
 	{
 		m_closeEvent();
 		m_isClosed = true;
-		if (m_platformWindow != nullptr)
-		{
-			m_platformWindow.reset();
-		}
+	}
+
+	void Window::destroy()
+	{
+		if (m_platformWindow == nullptr) return;
+		m_platformWindow.reset();
 	}
 
 	i32 Window::getWidth() const
@@ -74,7 +82,8 @@ namespace winWrap
 
 	Size Window::getSize() const
 	{
-		return m_platformWindow->getSize();
+		static Size errSize(1);
+		return m_platformWindow != nullptr ? m_platformWindow->getSize() : errSize;
 	}
 
 	ivec2 Window::getPosition() const

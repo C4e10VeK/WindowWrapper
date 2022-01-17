@@ -138,8 +138,6 @@ namespace winWrap
 		SetWindowLongPtr(m_windowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 		m_callback = SetWindowLongPtr(m_windowHandle, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&PlatformWindow::windowProc));
 
-//		m_lastSize = ivec2(params.width, params.height);
-
 		ShowWindow(m_windowHandle, 1);
 
 		return true;
@@ -167,7 +165,7 @@ namespace winWrap
 	{
 		switch (uMsg)
 		{
-			case WM_DESTROY:
+			case WM_CLOSE:
 				{
 					InternalEvent event{};
 					event.type = EventType::Closed;
@@ -212,6 +210,14 @@ namespace winWrap
 		if (pWindow == nullptr) return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
 		pWindow->windowProcess(uMsg, wParam, lParam);
+
+		switch (uMsg)
+		{
+		case WM_CLOSE:
+			return 0;
+		default:
+			break;
+		}
 
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
