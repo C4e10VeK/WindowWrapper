@@ -147,7 +147,7 @@ namespace winWrap
 		return m_platformWindow->createVulkanSurface(instance, surface);
 	}
 
-	std::vector<const char *> Window::getVulkanExtension()
+	std::vector<const char *> Window::getVulkanExtensions()
 	{
 		return getRequiredExtensions();
 	}
