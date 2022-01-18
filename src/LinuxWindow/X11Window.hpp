@@ -52,7 +52,7 @@ namespace winWrap
 
 		void setResizable(bool resizable) override;
 
-		bool pollEvent(InternalEvent &event) override;
+		bool pollEvents(InternalEvent &event) override;
 
 		bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface) override;
 	private:

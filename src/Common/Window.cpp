@@ -127,10 +127,10 @@ namespace winWrap
 		return WindowParams(getWidth(), getHeight(), getPosition(), "");
 	}
 
-	void Window::pollEvent()
+	void Window::pollEvents()
 	{
 		InternalEvent event{};
-		while(m_platformWindow && m_platformWindow->pollEvent(event))
+		while(m_platformWindow && m_platformWindow->pollEvents(event))
 		{
 			switch (event.type)
 			{

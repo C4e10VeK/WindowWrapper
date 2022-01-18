@@ -78,7 +78,7 @@ namespace winWrap
 
 	}
 
-	bool PlatformWindow::pollEvent(InternalEvent &event)
+	bool PlatformWindow::pollEvents(InternalEvent &event)
 	{
 		MSG msg{};
 		while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))

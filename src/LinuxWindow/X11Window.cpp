@@ -65,7 +65,7 @@ namespace winWrap
 
 	}
 
-	bool PlatformWindow::pollEvent(InternalEvent &event)
+	bool PlatformWindow::pollEvents(InternalEvent &event)
 	{
 		XEvent xEvent;
 		XNextEvent(m_display, &xEvent);

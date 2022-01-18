@@ -66,7 +66,7 @@ namespace winWrap
 
 		WindowParams getParams() override;
 
-		void pollEvent() override;
+		void pollEvents() override;
 
 		bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface);
 

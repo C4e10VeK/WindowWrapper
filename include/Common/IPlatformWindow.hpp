@@ -35,7 +35,7 @@ namespace winWrap
 
 		virtual void setResizable(bool resizable) = 0;
 
-		virtual bool pollEvent(InternalEvent &event) = 0;
+		virtual bool pollEvents(InternalEvent &event) = 0;
 
 		virtual bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface) = 0;
 	};	

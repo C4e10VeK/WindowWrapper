@@ -39,7 +39,7 @@ namespace winWrap
 
 		virtual WindowParams getParams() = 0;
 
-		virtual void pollEvent() = 0;
+		virtual void pollEvents() = 0;
 	};
 }
 
