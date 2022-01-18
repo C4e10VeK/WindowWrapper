@@ -3,8 +3,10 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "Noncopybale.hpp"
+#include "Callback.hpp"
 #include "IWindow.hpp"
 #include "Vulkan.hpp"
 
@@ -18,10 +20,10 @@ namespace winWrap
 	class Window : noncopybale, public IWindow
 	{
 	private:
-		using KeyPressedEvent = Event<IWindow &, Key>;
-		using KeyReleasedEvent = Event<IWindow &, Key>;
-		using ResizeEvent = Event<IWindow &, Size>;
-		using CloseEvent = Event<>;
+		using KeyPressedCallback = Callback<IWindow &, Key>;
+		using KeyReleasedCallback = Callback<IWindow &, Key>;
+		using ResizeCallback = Callback<IWindow &, Size>;
+		using CloseCallback = Callback<>;
 
 		std::unique_ptr<IPlatformWindow> m_platformWindow;
 
@@ -29,15 +31,15 @@ namespace winWrap
 
 		bool m_isClosed;
 
-		KeyPressedEvent m_keyPressed;
-		KeyReleasedEvent m_keyReleased;
-		ResizeEvent m_resizeEvent;
-		CloseEvent m_closeEvent;
+		KeyPressedCallback m_keyPressed;
+		KeyReleasedCallback m_keyReleased;
+		ResizeCallback m_resizeEvent;
+		CloseCallback m_closeEvent;
 	public:
-		KeyPressedEvent::IType &keyPressed;
-		KeyReleasedEvent::IType &keyReleased;
-		ResizeEvent::IType &resizeEvent;
-		CloseEvent::IType &closeEvent;
+		KeyPressedCallback::IType &keyPressed;
+		KeyReleasedCallback::IType &keyReleased;
+		ResizeCallback::IType &resized;
+		CloseCallback::IType &closed;
 
 		Window();
 		Window(std::string title, const WindowParams &params);

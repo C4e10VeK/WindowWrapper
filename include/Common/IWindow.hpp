@@ -3,7 +3,6 @@
 
 #include "Types.hpp"
 
-#include "Event.hpp"
 #include <string>
 
 namespace winWrap

@@ -14,21 +14,29 @@
 
 namespace winWrap
 {
+	struct Test
+	{
+		void teest(int a, int b)
+		{
+			std::cout << a + b << std::endl;
+		}
+	};
+
 	Window::Window()
 		: m_platformWindow(nullptr),
 	  	  m_isClosed(true),
 	  	  keyPressed(m_keyPressed),
 	  	  keyReleased(m_keyReleased),
-	  	  resizeEvent(m_resizeEvent),
-		  closeEvent(m_closeEvent) {}
+	  	  resized(m_resizeEvent),
+		  closed(m_closeEvent) {}
 
 	Window::Window(std::string title, const WindowParams &params)
 		: m_title(std::move(title)),
 	  	  m_isClosed(false),
 		  keyPressed(m_keyPressed),
 		  keyReleased(m_keyReleased),
-		  resizeEvent(m_resizeEvent),
-		  closeEvent(m_closeEvent)
+		  resized(m_resizeEvent),
+		  closed(m_closeEvent)
 	{
 		m_platformWindow = createSpecificPlatformWindow();
 		m_platformWindow->init(title, params);	
@@ -43,6 +51,8 @@ namespace winWrap
 	{
 		close();
 		destroy();
+
+		Callback<int, int> test;
 
 		m_title = title;
 		m_isClosed = false;
