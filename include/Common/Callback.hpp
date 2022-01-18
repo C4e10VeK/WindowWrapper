@@ -16,14 +16,14 @@ namespace winWrap
 	};
 
 	template<typename F>
-	class FunctorHolderT
+	class FunctorHolder
 	{
 	private:
 		F &m_functor;
 
 		template<typename T, typename... Args> friend class FunctorCallback;
 	public:
-		FunctorHolderT(F &functor) : m_functor(functor) { }
+		FunctorHolder(F &functor) : m_functor(functor) { }
 
 		template<typename... Args>
 		operator std::shared_ptr<AbstractCallback<Args...>>()
@@ -36,7 +36,7 @@ namespace winWrap
 	class FunctorCallback : public AbstractCallback<Args...>
 	{
 	private:
-		FunctorHolderT<F> m_functorHolder;
+		FunctorHolder<F> m_functorHolder;
 	public:
 		FunctorCallback(F &functor) : m_functorHolder(functor) { }
 
@@ -70,7 +70,7 @@ namespace winWrap
 	public:
 		virtual ~ICallback() = default;
 
-		virtual void connect(CallbackPtr callback) = 0;
+		virtual void connect(CallbackPtr &&callback) = 0;
 
 		template<typename T>
 		void operator=(T &&some)
@@ -95,7 +95,7 @@ namespace winWrap
 			m_callback->call(std::forward<Args>(args)...);
 		}
 
-		void connect(CallbackPtr some)
+		void connect(CallbackPtr &&some) override
 		{
 			m_callback = some;
 		}
@@ -107,9 +107,9 @@ namespace winWrap
 	};
 
 	template<typename F>
-	FunctorHolderT<F> createCallback(F &&functor)
+	FunctorHolder<F> createCallback(F &&functor)
 	{
-		return FunctorHolderT<F>(functor);
+		return FunctorHolder<F>(functor);
 	}
 
 	template<typename C, typename... Args>
