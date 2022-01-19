@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Common/Window.hpp>
+#include <Common/Callback.hpp>
+#include <Common/Types.hpp>
 #include <memory>
 #include <cassert>
 
@@ -14,6 +15,9 @@ namespace winWrap
 
 		virtual void call(Args... args) = 0;
 	};
+
+	template<typename F, typename... Args>
+	class FunctorCallback;
 
 	template<typename F>
 	class FunctorHolder
@@ -73,9 +77,10 @@ namespace winWrap
 		virtual void connect(CallbackPtr &&callback) = 0;
 
 		template<typename T>
-		void operator=(T &&some)
+		ICallback &operator=(T &&some)
 		{
 			connect(static_cast<CallbackPtr>(some));
+			return *this;
 		}
 	};
 

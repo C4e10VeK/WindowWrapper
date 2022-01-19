@@ -30,8 +30,8 @@ namespace winWrap
 	  	  resized(m_resizeEvent),
 		  closed(m_closeEvent) {}
 
-	Window::Window(std::string title, const WindowParams &params)
-		: m_title(std::move(title)),
+	Window::Window(const std::string &title, const WindowParams &params)
+		: m_title(title),
 	  	  m_isClosed(false),
 		  keyPressed(m_keyPressed),
 		  keyReleased(m_keyReleased),

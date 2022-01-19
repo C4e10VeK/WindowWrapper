@@ -42,7 +42,7 @@ namespace winWrap
 		CloseCallback::IType &closed;
 
 		Window();
-		Window(std::string title, const WindowParams &params);
+		Window(const std::string &title, const WindowParams &params);
 
 		~Window();
 

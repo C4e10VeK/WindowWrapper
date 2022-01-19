@@ -1,6 +1,4 @@
 #include "X11Window.hpp"
-#include <utility>
-#include <iostream>
 
 #include <Common/InternalEvent.hpp>
 
@@ -68,6 +66,9 @@ namespace winWrap
 	bool PlatformWindow::pollEvents(InternalEvent &event)
 	{
 		XEvent xEvent;
+
+		if (!XPending(m_display)) return false;
+
 		XNextEvent(m_display, &xEvent);
 
 		switch (xEvent.type)
@@ -139,6 +140,8 @@ namespace winWrap
 		initAtoms();
 
 		m_screen = DefaultScreen(m_display);
+		Window root = RootWindow(m_display, m_screen);
+		Colormap colormap = XCreateColormap(m_display, root, DefaultVisual(m_display, m_screen), AllocNone);
 
 		XSetWindowAttributes atr = {
 			.border_pixel = 0,
@@ -149,12 +152,12 @@ namespace winWrap
 						  EnterWindowMask      | LeaveWindowMask     |
 						  VisibilityChangeMask | PropertyChangeMask  |
 						  SubstructureNotifyMask,
-			.colormap = XCreateColormap(m_display, RootWindow(m_display, m_screen), DefaultVisual(m_display, m_screen), AllocNone)
+			.colormap = colormap
 		};
 
 		m_xWindow = XCreateWindow(
 			m_display,
-			RootWindow(m_display, m_screen), params.position.x, params.position.y, params.size.width,
+			root, params.position.x, params.position.y, params.size.width,
 			params.size.height,
 			0,
 			DefaultDepth(m_display, m_screen),

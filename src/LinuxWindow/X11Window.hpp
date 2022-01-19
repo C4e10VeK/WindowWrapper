@@ -6,7 +6,6 @@
 
 #include <Common/IPlatformWindow.hpp>
 #include <Common/Noncopybale.hpp>
-#include <Common/Event.hpp>
 #include <Common/WindowParams.hpp>
 
 namespace winWrap
