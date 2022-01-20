@@ -61,7 +61,7 @@ namespace winWrap
 		bool createSpecificPlatformWindow(const std::string &title, const WindowParams &params);
 		bool createWindowClass(const std::string &title);
 
-		void windowProcess(UINT uMsg, WPARAM wParam, LPARAM lParam);
+		LRESULT windowProcess(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 		static LRESULT CALLBACK windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	};

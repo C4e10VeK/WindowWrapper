@@ -1,4 +1,5 @@
 #include "WAWindow.hpp"
+#include <windowsx.h>
 
 #include <iostream>
 
@@ -161,7 +162,7 @@ namespace winWrap
 		return RegisterClassEx(&wcex);
 	}
 
-	void PlatformWindow::windowProcess(UINT uMsg, WPARAM wParam, LPARAM lParam)
+	LRESULT PlatformWindow::windowProcess(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (uMsg)
 		{
@@ -171,7 +172,7 @@ namespace winWrap
 					event.type = EventType::Closed;
 					m_eventList.push(event);
 				}
-				break;
+				return 0;
 			case WM_KEYDOWN:
 			case WM_SYSKEYDOWN:
 				{
@@ -198,9 +199,19 @@ namespace winWrap
 					m_eventList.push(event);
 				}
 				break;
+			case WM_MOUSEMOVE:
+				{
+					InternalEvent event;
+					event.type = EventType::MouseMoved;
+					event.mousePos = dvec2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+					m_eventList.push(event);
+				}
+				break;
 			default:
 				break;
 		}
+
+		return DefWindowProc(m_windowHandle, uMsg, wParam, lParam);
 	}
 
 	LRESULT CALLBACK PlatformWindow::windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -209,16 +220,8 @@ namespace winWrap
 
 		if (pWindow == nullptr) return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
-		pWindow->windowProcess(uMsg, wParam, lParam);
+		LRESULT res = pWindow->windowProcess(uMsg, wParam, lParam);
 
-		switch (uMsg)
-		{
-		case WM_CLOSE:
-			return 0;
-		default:
-			break;
-		}
-
-		return DefWindowProc(hwnd, uMsg, wParam, lParam);
+		return res;
 	}
 }

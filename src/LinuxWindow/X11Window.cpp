@@ -106,6 +106,12 @@ namespace winWrap
 					event.key = key;
 				}
 				return true;
+			case MotionNotify:
+				{
+					event.type = EventType::MouseMoved;
+					event.mousePos = dvec2(xEvent.xmotion.x, xEvent.xmotion.y);
+				}
+				return true;
 			case ConfigureNotify:
 				{
 					ivec2 size(xEvent.xconfigurerequest.width, xEvent.xconfigurerequest.height);

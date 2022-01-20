@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Common/Callback.hpp>
-#include <Common/Types.hpp>
+#include "Common/Types.hpp"
 #include <memory>
+#include <mutex>
 #include <cassert>
 
 namespace winWrap
@@ -91,11 +91,14 @@ namespace winWrap
 		using CallbackPtr = std::shared_ptr<AbstractCallback<Args...>>;
 
 		CallbackPtr m_callback;
+		mutable std::mutex m_callMutex;
 	public:
 		using IType = ICallback<Args...>;
 
 		void call(Args... args)
 		{
+			std::lock_guard<std::mutex> lock(m_callMutex);
+
 			if (m_callback == nullptr) return;
 			m_callback->call(std::forward<Args>(args)...);
 		}

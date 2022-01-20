@@ -9,6 +9,7 @@
 
 #include <Common/InternalEvent.hpp>
 #include <iostream>
+#include <future>
 
 #include "VulkanUtils.hpp"
 
@@ -28,6 +29,7 @@ namespace winWrap
 	  	  keyPressed(m_keyPressed),
 	  	  keyReleased(m_keyReleased),
 	  	  resized(m_resizeEvent),
+		  mouseMoved(m_mouseMoved),
 		  closed(m_closeEvent) {}
 
 	Window::Window(const std::string &title, const WindowParams &params)
@@ -36,6 +38,7 @@ namespace winWrap
 		  keyPressed(m_keyPressed),
 		  keyReleased(m_keyReleased),
 		  resized(m_resizeEvent),
+		  mouseMoved(m_mouseMoved),
 		  closed(m_closeEvent)
 	{
 		m_platformWindow = createSpecificPlatformWindow();
@@ -132,8 +135,10 @@ namespace winWrap
 		InternalEvent event{};
 		while(m_platformWindow && m_platformWindow->pollEvents(event))
 		{
-			switch (event.type)
+			std::future<void> handle = std::async(std::launch::async, [&]()
 			{
+				switch (event.type)
+				{
 				case EventType::KeyPressed:
 					m_keyPressed(*this, event.key);
 					break;
@@ -143,12 +148,16 @@ namespace winWrap
 				case EventType::Resized:
 					m_resizeEvent(*this, event.size);
 					break;
+				case EventType::MouseMoved:
+					m_mouseMoved(*this, event.mousePos);
+					break;
 				case EventType::Closed:
 					close();
 					break;
 				default:
 					break;
-			}
+				}
+			});
 		}
 	}
 

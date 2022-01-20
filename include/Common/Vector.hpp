@@ -85,6 +85,7 @@ namespace winWrap
 	using Size = ivec2;
 	using uvec2 = vec2<u32>;
 	using fvec2 = vec2<float>;
+	using dvec2 = vec2<double>;
 }
 
 #endif // WINDOWWRAPPER_VECTORT_HPP

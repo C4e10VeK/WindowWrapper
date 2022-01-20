@@ -129,8 +129,9 @@ namespace winWrap
 	struct InternalEvent
 	{
 		EventType type{EventType::Non};
-		Size size;
 		Key key{Key::Non};
+		Size size;
+		dvec2 mousePos;
 
 		InternalEvent() = default;
 	};

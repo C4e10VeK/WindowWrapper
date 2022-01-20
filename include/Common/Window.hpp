@@ -23,6 +23,7 @@ namespace winWrap
 		using KeyPressedCallback = Callback<IWindow &, Key>;
 		using KeyReleasedCallback = Callback<IWindow &, Key>;
 		using ResizeCallback = Callback<IWindow &, Size>;
+		using MouseMoveCallback = Callback<IWindow &, dvec2>;
 		using CloseCallback = Callback<>;
 
 		std::unique_ptr<IPlatformWindow> m_platformWindow;
@@ -34,11 +35,13 @@ namespace winWrap
 		KeyPressedCallback m_keyPressed;
 		KeyReleasedCallback m_keyReleased;
 		ResizeCallback m_resizeEvent;
+		MouseMoveCallback m_mouseMoved;
 		CloseCallback m_closeEvent;
 	public:
 		KeyPressedCallback::IType &keyPressed;
 		KeyReleasedCallback::IType &keyReleased;
 		ResizeCallback::IType &resized;
+		MouseMoveCallback::IType &mouseMoved;
 		CloseCallback::IType &closed;
 
 		Window();

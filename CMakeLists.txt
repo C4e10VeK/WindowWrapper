@@ -33,7 +33,8 @@ file(GLOB_RECURSE SOURCE_FILES
 		"${CMAKE_CURRENT_SOURCE_DIR}/src/Common/*.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/src/${PLATFORM_PATH}/*.cpp")
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
+add_executable(${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/examples/SimpleWindow.cpp"  ${SOURCE_FILES} ${HEADER_FILES})
+# add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBS})
