@@ -15,25 +15,16 @@ int main()
 		std::abort();
 	}
 
-	wnd.keyPressed += [](winWrap::IWindow &sender, winWrap::Key key)
+	wnd.keyPressed = winWrap::createCallback([](winWrap::IWindow &sender, winWrap::Key key)
 	{
 		if (key == winWrap::Key::Escape)
 			sender.close();
-	};
+	});
 
-	wnd.resizeEvent += [](winWrap::IWindow &sender, winWrap::Size size)
-	{
-		std::cerr << "New size: width=" << size.width << ", height=" << size.height << std::endl;
-	};
-
-	wnd.closeEvent += []()
-	{
-		std::cout << "Closing" << std::endl;
-	};
 
 	while (!wnd.isClosed())
 	{
-		wnd.pollEvent();
+		wnd.pollEvents();
 	}
 
 	return EXIT_SUCCESS;
