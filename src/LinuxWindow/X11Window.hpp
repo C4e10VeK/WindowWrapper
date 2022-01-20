@@ -8,6 +8,8 @@
 #include <Common/Noncopybale.hpp>
 #include <Common/WindowParams.hpp>
 
+#include "../Common/VulkanUtils.hpp"
+
 namespace winWrap
 {
 
@@ -31,6 +33,7 @@ namespace winWrap
 		Atoms m_atoms;
 
 		friend class Window;
+		friend VkResult createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface);
 		friend bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface);
 	public:	
 		PlatformWindow() = default;

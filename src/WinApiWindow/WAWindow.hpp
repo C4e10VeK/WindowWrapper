@@ -10,6 +10,8 @@
 #include <Common/WindowParams.hpp>
 #include <Common/InternalEvent.hpp>
 
+#include "Common/VulkanUtils.hpp"
+
 namespace winWrap
 {
 	class PlatformWindow : noncopybale, public IPlatformWindow
@@ -33,6 +35,7 @@ namespace winWrap
 
 		InternalEventList m_eventList;
 
+		friend VkResult createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface);
 		friend bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface);
 	public:
 

@@ -83,6 +83,8 @@ namespace winWrap
 {
 	class PlatformWindow;
 
+	VkResult createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface);
+
 	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface);
 
 	std::vector<const char *> getRequiredExtensions();

@@ -3,7 +3,6 @@
 #include <Common/InternalEvent.hpp>
 
 #include "../Common/InputUtils.hpp"
-#include "../Common/VulkanUtils.hpp"
 
 namespace winWrap
 {

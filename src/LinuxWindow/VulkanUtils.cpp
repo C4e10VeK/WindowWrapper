@@ -2,6 +2,8 @@
 #include "X11Window.hpp"
 #include <dlfcn.h>
 #include <cstring>
+#include <iostream>
+#include <X11/Xlib-xcb.h>
 
 struct VkXlibSurfaceCreateInfoKHR {
 	VkStructureType				   sType;
@@ -11,7 +13,16 @@ struct VkXlibSurfaceCreateInfoKHR {
 	Window						   window;
 };
 
+struct VkXcbSurfaceCreateInfoKHR {
+	VkStructureType				  sType;
+	const void*					  pNext;
+	winWrap::u32				  flags;
+	xcb_connection_t*			  connection;
+	xcb_window_t				  window;
+};
+
 using PFN_vkCreateXlibSurfaceKHR = VkResult (VK_API_CALL *)(VkInstance instance, const VkXlibSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
+using PFN_vkCreateXcbSurfaceKHR = VkResult (VK_API_CALL *)(VkInstance instance, const VkXcbSurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
 
 namespace winWrap
 {
@@ -19,12 +30,18 @@ namespace winWrap
 	{
 	private:
 		void *m_vkLibrary;
+		bool m_avaible;
+		bool m_xcbSupport;
+		bool m_xlibSupport;
 	public:
 		PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
 		PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
 
 		VulkanWrapper()
 			: m_vkLibrary(nullptr),
+			  m_avaible(false),
+			  m_xcbSupport(false),
+			  m_xlibSupport(false),
 			  vkGetInstanceProcAddr(nullptr),
 			  vkEnumerateInstanceExtensionProperties(nullptr) { }
 
@@ -33,37 +50,31 @@ namespace winWrap
 			closeLib();
 		}
 
-		bool loadLib()
+		void loadLib()
 		{
 			if (m_vkLibrary)
-				return true;
+				return;
 
 			m_vkLibrary = dlopen("libvulkan.so.1", RTLD_LAZY | RTLD_LOCAL);
 			if (m_vkLibrary == nullptr)
-				return false;
+				return;
 
-			vkGetInstanceProcAddr = reinterpret_cast<PFN_vkGetInstanceProcAddr>( dlsym(m_vkLibrary, "vkGetInstanceProcAddr"));
+			vkGetInstanceProcAddr =
+				reinterpret_cast<PFN_vkGetInstanceProcAddr>( dlsym(m_vkLibrary, "vkGetInstanceProcAddr"));
 			if (vkGetInstanceProcAddr == nullptr)
 			{
 				closeLib();
-				return false;
+				return;
 			}
 
-			vkEnumerateInstanceExtensionProperties = reinterpret_cast<PFN_vkEnumerateInstanceExtensionProperties>(dlsym(m_vkLibrary, "vkEnumerateInstanceExtensionProperties"));
+			vkEnumerateInstanceExtensionProperties =
+				reinterpret_cast<PFN_vkEnumerateInstanceExtensionProperties>(dlsym(m_vkLibrary, "vkEnumerateInstanceExtensionProperties"));
 			if (vkEnumerateInstanceExtensionProperties == nullptr)
 			{
 				closeLib();
-				return false;
+				return;
 			}
 
-			return true;
-		}
-
-		bool isAvailable()
-		{
-			if (m_vkLibrary == nullptr)
-				return false;
-			
 			u32 count;
 			std::vector<VkExtensionProperties> properties;
 
@@ -71,16 +82,16 @@ namespace winWrap
 			if (err)
 			{
 				closeLib();
-				return false;
+				return;
 			}
 
 			properties.resize(count);
 
-			err =vkEnumerateInstanceExtensionProperties(nullptr, &count, properties.data());
+			err = vkEnumerateInstanceExtensionProperties(nullptr, &count, properties.data());
 			if (err)
 			{
 				closeLib();
-				return false;
+				return;
 			}
 
 			bool hasSurface = false;
@@ -92,13 +103,32 @@ namespace winWrap
 					hasSurface = true;
 					continue;
 				}
+				if (!std::strcmp(p.extensionName, "VK_KHR_xcb_surface"))
+				{
+					m_xcbSupport = true;
+				}
 				if (!std::strcmp(p.extensionName, "VK_KHR_xlib_surface"))
 				{
-					hasPlatformSurface = true;
+					m_xlibSupport = true;
 				}
 			}
 
-			return hasSurface && hasPlatformSurface;
+			m_avaible = hasSurface && (m_xlibSupport || m_xcbSupport);
+		}
+
+		bool isAvailable() const
+		{
+			return m_avaible;
+		}
+
+		bool isXcbSupport() const
+		{
+			return m_xcbSupport;
+		}
+
+		bool isXlibSupport() const
+		{
+			return m_xlibSupport;
 		}
 	private:
 		void closeLib()
@@ -110,32 +140,69 @@ namespace winWrap
 
 	};
 
-	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface)
+	VkResult createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface)
 	{
 		VulkanWrapper vk;
 
-		if (!vk.loadLib())
-			return false;
+		vk.loadLib();
 
 		if (!vk.isAvailable())
-			return false;
+			return VK_ERROR_EXTENSION_NOT_PRESENT;
 
-		VkXlibSurfaceCreateInfoKHR info = {
-			.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,
-			.dpy = window.m_display,
-			.window = window.m_xWindow
-		};
+		if (vk.isXcbSupport())
+		{
+			auto vkCreateXcbSurfaceKHR =
+				reinterpret_cast<PFN_vkCreateXcbSurfaceKHR>(vk.vkGetInstanceProcAddr(instance, "vkCreateXcbSurfaceKHR"));
+			if (vkCreateXcbSurfaceKHR == nullptr)
+				return VK_ERROR_EXTENSION_NOT_PRESENT;
+			
+			xcb_connection_t *connection = XGetXCBConnection(window.m_display);
+			if (connection == nullptr)
+				return VK_ERROR_EXTENSION_NOT_PRESENT;
 
-		auto vkCreateXlibSurfaceKHR = reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(vk.vkGetInstanceProcAddr(instance, "vkCreateXlibSurfaceKHR"));
-		if (vkCreateXlibSurfaceKHR == nullptr)
-			return false;
+			VkXcbSurfaceCreateInfoKHR info = {
+				.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR,
+				.connection = connection,
+				.window = static_cast<u32>(window.m_xWindow)
+			};
 
-		return (vkCreateXlibSurfaceKHR(instance, &info, nullptr, &surface) == VK_SUCCESS);
+			return vkCreateXcbSurfaceKHR(instance, &info, pAllocator, surface);
+		}
+		if (vk.isXlibSupport())
+		{
+			auto vkCreateXlibSurfaceKHR = 
+				reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(vk.vkGetInstanceProcAddr(instance, "vkCreateXlibSurfaceKHR"));
+			if (vkCreateXlibSurfaceKHR == nullptr)
+				return VK_ERROR_EXTENSION_NOT_PRESENT;
+
+			VkXlibSurfaceCreateInfoKHR info = {
+				.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR,
+				.dpy = window.m_display,
+				.window = window.m_xWindow
+			};
+
+			return vkCreateXlibSurfaceKHR(instance, &info, pAllocator, surface);
+		}
+
+		return VK_ERROR_EXTENSION_NOT_PRESENT;
+	}
+
+	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface)
+	{
+		return createVulkanSurfacePr(instance, window, nullptr, &surface) == VK_SUCCESS;
 	}
 
 	std::vector<const char *> getRequiredExtensions()
 	{
-		return {"VK_KHR_surface", "VK_KHR_xlib_surface"};
+		VulkanWrapper vk;
+		vk.loadLib();
+
+		if (vk.isXcbSupport())
+			return {"VK_KHR_surface", "VK_KHR_xcb_surface"};
+		if (vk.isXlibSupport())
+			return {"VK_KHR_surface", "VK_KHR_xlib_surface"};
+		
+		return {};
 	}
 }
 

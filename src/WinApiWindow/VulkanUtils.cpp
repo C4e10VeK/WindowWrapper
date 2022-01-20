@@ -105,16 +105,16 @@ namespace winWrap
 			m_vkLibrary = nullptr;
 		}
 	};
-	
-	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface)
+
+	VkResult createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface)
 	{
 		VulkanWrapper vk;
 
 		if (!vk.loadLib())
-			return false;
+			return VK_ERROR_EXTENSION_NOT_PRESENT;
 		
 		if (!vk.isAvailable())
-			return false;
+			return VK_ERROR_EXTENSION_NOT_PRESENT;
 
 		VkWin32SurfaceCreateInfoKHR info = {
 			.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
@@ -125,9 +125,14 @@ namespace winWrap
 		auto vkCreateWin32SurfaceKHR = reinterpret_cast<PFN_vkCreateWin32SurfaceKHR>(vk.vkGetInstanceProcAddr(instance, "vkCreateWin32SurfaceKHR"));
 
 		if (vkCreateWin32SurfaceKHR == nullptr)
-			return false;
+			return VK_ERROR_EXTENSION_NOT_PRESENT;
 
-		return (vkCreateWin32SurfaceKHR(instance, &info, nullptr, &surface) == VK_SUCCESS);
+		return vkCreateWin32SurfaceKHR(instance, &info, pAllocator, surface);
+	}
+	
+	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface)
+	{
+		return createVulkanSurfacePr(instance, window, nullptr, &surface);
 	}
 
 	std::vector<const char*> getRequiredExtensions()
