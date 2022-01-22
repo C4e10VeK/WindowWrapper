@@ -71,6 +71,8 @@ namespace winWrap
 
 		void pollEvents() override;
 
+		VkResult createVulkanSurface(VkInstance instance, const VkAllocationCallbacks *pAllocator, VkSurfaceKHR *surface);
+
 		bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface);
 
 		static std::vector<const char*> getVulkanExtensions();

@@ -1,8 +1,10 @@
 #include "X11Window.hpp"
 
+#include <unistd.h>
 #include <Common/InternalEvent.hpp>
 
 #include "../Common/InputUtils.hpp"
+#include "../Common/VulkanUtils.hpp"
 
 namespace winWrap
 {
@@ -113,11 +115,18 @@ namespace winWrap
 				return true;
 			case ConfigureNotify:
 				{
-					ivec2 size(xEvent.xconfigurerequest.width, xEvent.xconfigurerequest.height);
-					event.type = EventType::Resized;
-					event.size = size;
+					XConfigureEvent &configure = xEvent.xconfigure;
+					if (configure.width != m_prevSize.width || configure.height != m_prevSize.height)
+					{
+						ivec2 size(xEvent.xconfigurerequest.width, xEvent.xconfigurerequest.height);
+						event.type = EventType::Resized;
+						event.size = size;
+
+						m_prevSize.width = configure.width;
+						m_prevSize.height = configure.height;
+					}
 				}
-				break;
+				return true;
 			case ClientMessage:
 					{
 						if (xEvent.xclient.data.l[0] == m_atoms.atomDeleteWindow)
@@ -130,6 +139,12 @@ namespace winWrap
 
 		return false;
 	}
+
+	VkResult PlatformWindow::createVulkanSurface(VkInstance instance, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface)
+	{
+		return createVulkanSurfacePr(instance, *this, pAllocator, surface);
+	}
+
 
 	bool PlatformWindow::createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface)
 	{
@@ -145,20 +160,18 @@ namespace winWrap
 		initAtoms();
 
 		m_screen = DefaultScreen(m_display);
-		Window root = RootWindow(m_display, m_screen);
+		Window root = DefaultRootWindow(m_display);
 		Colormap colormap = XCreateColormap(m_display, root, DefaultVisual(m_display, m_screen), AllocNone);
 
-		XSetWindowAttributes atr = {
-			.border_pixel = 0,
-			.event_mask = FocusChangeMask      | ButtonPressMask     |
-						  ButtonReleaseMask    | ButtonMotionMask    |
-						  PointerMotionMask    | KeyPressMask        |
-						  KeyReleaseMask       | StructureNotifyMask |
-						  EnterWindowMask      | LeaveWindowMask     |
-						  VisibilityChangeMask | PropertyChangeMask  |
-						  SubstructureNotifyMask,
-			.colormap = colormap
-		};
+		XSetWindowAttributes atr{};
+		atr.border_pixel = 0;
+		atr.event_mask = FocusChangeMask | ButtonPressMask |
+						 ButtonReleaseMask | ButtonMotionMask |
+						 PointerMotionMask | KeyPressMask |
+						 KeyReleaseMask | StructureNotifyMask |
+						 EnterWindowMask | LeaveWindowMask;
+		atr.do_not_propagate_mask = 0;
+		atr.colormap = colormap;
 
 		m_xWindow = XCreateWindow(
 			m_display,
@@ -168,7 +181,7 @@ namespace winWrap
 			DefaultDepth(m_display, m_screen),
 			InputOutput,
 			DefaultVisual(m_display, m_screen),
-			CWColormap | CWEventMask | CWBorderPixel,
+			CWColormap | CWEventMask | CWOverrideRedirect,
 			&atr);
 
 		if (!m_xWindow)
@@ -177,7 +190,16 @@ namespace winWrap
 			return false;
 		}
 
-		XSetWMProtocols(m_display, m_xWindow, &m_atoms.atomDeleteWindow, 1);
+		m_prevSize = params.size;
+
+		{
+			Atom atoms[] = {
+				m_atoms.atomDeleteWindow,
+				m_atoms.atomWMPing
+			};
+
+			XSetWMProtocols(m_display, m_xWindow, atoms, sizeof(atoms) / sizeof(Atom));
+		}
 
 		if (!params.resizeable)
 		{
@@ -195,20 +217,18 @@ namespace winWrap
 			XFree(sizeHints);
 		}
 
-		XSelectInput(m_display, m_xWindow, ExposureMask | KeyPressMask);
-		XMapWindow(m_display, m_xWindow);
-		XRaiseWindow(m_display, m_xWindow);
-
+		XSelectInput(m_display, m_xWindow, atr.event_mask);
 		XStoreName(m_display, m_xWindow, title.c_str());
+		XMapWindow(m_display, m_xWindow);	
+
+		XFlush(m_display);
 
 		return true;
 	}
 
 	void PlatformWindow::initAtoms()
 	{
-		m_atoms.atomDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", false);
-		m_atoms.atomResizeWindow = XInternAtom(m_display, "WM_ACTION_RESIZE", false);
-		m_atoms.atomSize = XInternAtom(m_display, "WM_SIZE_HINTS", false);
-		m_atoms.atomWMIcon = XInternAtom(m_display, "_NET_WM_ICON", false);
+		m_atoms.atomDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", false);	
+		m_atoms.atomWMPing = XInternAtom(m_display, "_NET_WM_PING", false);
 	}
 }

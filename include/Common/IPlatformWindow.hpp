@@ -37,6 +37,8 @@ namespace winWrap
 
 		virtual bool pollEvents(InternalEvent &event) = 0;
 
+		virtual VkResult createVulkanSurface(VkInstance instance, const VkAllocationCallbacks *pAllocator, VkSurfaceKHR *surface) = 0;
+
 		virtual bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface) = 0;
 	};	
 }

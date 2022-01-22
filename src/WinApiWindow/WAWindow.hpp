@@ -10,8 +10,6 @@
 #include <Common/WindowParams.hpp>
 #include <Common/InternalEvent.hpp>
 
-#include "Common/VulkanUtils.hpp"
-
 namespace winWrap
 {
 	class PlatformWindow : noncopybale, public IPlatformWindow
@@ -58,6 +56,8 @@ namespace winWrap
 		void setResizable(bool resizable) override;
 
 		bool pollEvents(InternalEvent &event) override;
+
+		VkResult createVulkanSurface(VkInstance instance, const VkAllocationCallbacks *pAllocator, VkSurfaceKHR *surface) override;
 
 		bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface) override;
 	private:

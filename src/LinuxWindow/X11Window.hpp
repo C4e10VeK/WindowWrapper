@@ -8,8 +8,6 @@
 #include <Common/Noncopybale.hpp>
 #include <Common/WindowParams.hpp>
 
-#include "../Common/VulkanUtils.hpp"
-
 namespace winWrap
 {
 
@@ -18,19 +16,18 @@ namespace winWrap
 	class PlatformWindow final : noncopybale, public IPlatformWindow
 	{
 	private:
+		struct Atoms
+		{
+			Atom atomDeleteWindow;	
+			Atom atomWMPing;
+		};
+
+		Atoms m_atoms;
 		::Window m_xWindow{};
 		Display *m_display{};
 		int m_screen{};
 
-		struct Atoms
-		{
-			Atom atomDeleteWindow;
-			Atom atomResizeWindow;
-			Atom atomSize;
-			Atom atomWMIcon;
-		};
-
-		Atoms m_atoms;
+		Size m_prevSize{};
 
 		friend class Window;
 		friend VkResult createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface);
@@ -55,6 +52,8 @@ namespace winWrap
 		void setResizable(bool resizable) override;
 
 		bool pollEvents(InternalEvent &event) override;
+
+		VkResult createVulkanSurface(VkInstance instance, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface) override;
 
 		bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface) override;
 	private:

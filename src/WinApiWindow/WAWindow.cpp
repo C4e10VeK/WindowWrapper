@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "../Common/InputUtils.hpp"
+#include "../Common/VulkanUtils.hpp"
 
 namespace winWrap
 {
@@ -35,6 +36,7 @@ namespace winWrap
 		return createSpecificPlatformWindow(title, params);
 	}
 
+	// TODO: set title return error
 	void PlatformWindow::setTitle(const std::string &title)
 	{
 		SetWindowText(m_windowHandle, title.c_str());
@@ -94,6 +96,11 @@ namespace winWrap
 		}
 
 		return false;
+	}
+
+	VkResult PlatformWindow::createVulkanSurface(VkInstance instance, const VkAllocationCallbacks *pAllocator, VkSurfaceKHR *surface)
+	{
+		return createVulkanSurfacePr(instance, *this, pAllocator, surface);
 	}
 
 	bool PlatformWindow::createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface)
