@@ -1,6 +1,8 @@
 #ifndef WINDOWWRAPPER_VULKAN_HPP
 #define WINDOWWRAPPER_VULKAN_HPP
 
+#ifndef VK_VERSION_1_1
+
 using VkInstance = struct VkInstance_T*;
 
 #if defined(__LP64__) || defined(_WIN64) || (defined(__x86_64__) && !defined(__ILP32__) ) || defined(_M_X64) || defined(__ia64) || defined (_M_IA64) || defined(__aarch64__) || defined(__powerpc64__)
@@ -63,5 +65,6 @@ enum VkResult {
 	VK_RESULT_MAX_ENUM = 0x7FFFFFFF
 };
 
+#endif
 
 #endif
