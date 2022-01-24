@@ -30,7 +30,7 @@ namespace winWrap
 		Size m_prevSize{};
 
 		friend class Window;
-		friend VkResult createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface);
+		friend bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface);
 		friend bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface);
 	public:	
 		PlatformWindow() = default;
@@ -53,7 +53,7 @@ namespace winWrap
 
 		bool pollEvents(InternalEvent &event) override;
 
-		VkResult createVulkanSurface(VkInstance instance, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface) override;
+		bool createVulkanSurface(VkInstance instance, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface) override;
 
 		bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface) override;
 	private:

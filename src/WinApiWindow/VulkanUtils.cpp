@@ -106,7 +106,7 @@ namespace winWrap
 		}
 	};
 
-	VkResult createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface)
+	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface)
 	{
 		VulkanWrapper vk;
 
@@ -127,7 +127,7 @@ namespace winWrap
 		if (vkCreateWin32SurfaceKHR == nullptr)
 			return VK_ERROR_EXTENSION_NOT_PRESENT;
 
-		return vkCreateWin32SurfaceKHR(instance, &info, pAllocator, surface);
+		return vkCreateWin32SurfaceKHR(instance, &info, pAllocator, surface) == VK_SUCCESS;
 	}
 	
 	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface)

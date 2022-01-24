@@ -161,7 +161,7 @@ namespace winWrap
 		}
 	}
 
-	VkResult Window::createVulkanSurface(VkInstance instance, const VkAllocationCallbacks *allocator, VkSurfaceKHR *surface)
+	bool Window::createVulkanSurface(VkInstance instance, const VkAllocationCallbacks *allocator, VkSurfaceKHR *surface)
 	{
 		return m_platformWindow->createVulkanSurface(instance, allocator, surface);
 	}

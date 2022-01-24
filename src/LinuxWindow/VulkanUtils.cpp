@@ -140,7 +140,7 @@ namespace winWrap
 
 	};
 
-	VkResult createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface)
+	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface)
 	{
 		VulkanWrapper vk;
 
@@ -166,7 +166,7 @@ namespace winWrap
 				.window = static_cast<u32>(window.m_xWindow)
 			};
 
-			return vkCreateXcbSurfaceKHR(instance, &info, pAllocator, surface);
+			return vkCreateXcbSurfaceKHR(instance, &info, pAllocator, surface) == VK_SUCCESS;
 		}
 		if (vk.isXlibSupport())
 		{
@@ -181,7 +181,7 @@ namespace winWrap
 				.window = window.m_xWindow
 			};
 
-			return vkCreateXlibSurfaceKHR(instance, &info, pAllocator, surface);
+			return vkCreateXlibSurfaceKHR(instance, &info, pAllocator, surface) == VK_SUCCESS;
 		}
 
 		return VK_ERROR_EXTENSION_NOT_PRESENT;
@@ -189,7 +189,7 @@ namespace winWrap
 
 	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface)
 	{
-		return createVulkanSurfacePr(instance, window, nullptr, &surface) == VK_SUCCESS;
+		return createVulkanSurfacePr(instance, window, nullptr, &surface);
 	}
 
 	std::vector<const char *> getRequiredExtensions()
