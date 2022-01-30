@@ -2,22 +2,21 @@
 
 #include "Common/Types.hpp"
 #include <memory>
-#include <mutex>
 #include <cassert>
 
 namespace winWrap
 {
 	template<typename... Args>
-	class AbstractCallback
+	class ICallbackHandler
 	{
 	public:
-		virtual ~AbstractCallback() = default;
+		virtual ~ICallbackHandler() = default;
 
-		virtual void call(Args... args) = 0;
+		virtual void call(Args &&...args) = 0;
 	};
 
 	template<typename F, typename... Args>
-	class FunctorCallback;
+	class FunctorCallbackHandler;
 
 	template<typename F>
 	class FunctorHolder
@@ -25,33 +24,33 @@ namespace winWrap
 	private:
 		F &m_functor;
 
-		template<typename T, typename... Args> friend class FunctorCallback;
+		template<typename T, typename... Args> friend class FunctorCallbackHandler;
 	public:
 		FunctorHolder(F &functor) : m_functor(functor) { }
 
 		template<typename... Args>
-		operator std::shared_ptr<AbstractCallback<Args...>>()
+		operator std::shared_ptr<ICallbackHandler<Args...>>()
 		{
-			return std::make_shared<FunctorCallback<F, Args...>>(m_functor);
+			return std::make_shared<FunctorCallbackHandler<F, Args...>>(m_functor);
 		}
 	};
 
 	template<typename F, typename... Args>
-	class FunctorCallback : public AbstractCallback<Args...>
+	class FunctorCallbackHandler : public ICallbackHandler<Args...>
 	{
 	private:
 		FunctorHolder<F> m_functorHolder;
 	public:
-		FunctorCallback(F &functor) : m_functorHolder(functor) { }
+		FunctorCallbackHandler(F &functor) : m_functorHolder(functor) { }
 
-		void call(Args... args) override
+		void call(Args &&...args) override
 		{
 			m_functorHolder.m_functor(std::forward<Args>(args)...);
 		}
 	};
 
 	template<typename C, typename... Args>
-	class MethodCallback : public AbstractCallback<Args...>
+	class MethodCallbackHandler : public ICallbackHandler<Args...>
 	{
 	private:
 		using Method = void (C::*)(Args...);
@@ -59,9 +58,9 @@ namespace winWrap
 		C &m_class;
 		Method m_method;
 	public:
-		MethodCallback(C &c, Method m) : m_class(c), m_method(m) {  }
+		MethodCallbackHandler(C &c, Method m) : m_class(c), m_method(m) {  }
 
-		void call(Args... args) override
+		void call(Args &&...args) override
 		{
 			(m_class.*m_method)(std::forward<Args>(args)...);
 		}
@@ -70,7 +69,7 @@ namespace winWrap
 	template<typename... Args>
 	class ICallback
 	{
-		using CallbackPtr = std::shared_ptr<AbstractCallback<Args...>>;
+		using CallbackPtr = std::shared_ptr<ICallbackHandler<Args...>>;
 	public:
 		virtual ~ICallback() = default;
 
@@ -88,17 +87,14 @@ namespace winWrap
 	class Callback : public ICallback<Args...>
 	{
 	private:
-		using CallbackPtr = std::shared_ptr<AbstractCallback<Args...>>;
+		using CallbackPtr = std::shared_ptr<ICallbackHandler<Args...>>;
 
 		CallbackPtr m_callback;
-		mutable std::mutex m_callMutex;
 	public:
 		using IType = ICallback<Args...>;
 
-		void call(Args... args)
+		void call(Args &&...args)
 		{
-			std::lock_guard<std::mutex> lock(m_callMutex);
-
 			if (m_callback == nullptr) return;
 			m_callback->call(std::forward<Args>(args)...);
 		}
@@ -108,7 +104,7 @@ namespace winWrap
 			m_callback = some;
 		}
 
-		void operator()(Args... args)
+		void operator()(Args ...args)
 		{
 			call(std::forward<Args>(args)...);
 		}
@@ -121,8 +117,8 @@ namespace winWrap
 	}
 
 	template<typename C, typename... Args>
-	std::shared_ptr<AbstractCallback<Args...>> createCallback(C &c, void(C::*method)(Args...))
+	std::shared_ptr<ICallbackHandler<Args...>> createCallback(C &c, void(C::*method)(Args...))
 	{
-		return std::make_shared<MethodCallback<C, Args...>>(c, method);
+		return std::make_shared<MethodCallbackHandler<C, Args...>>(c, method);
 	}
 } // namespace winWrap
