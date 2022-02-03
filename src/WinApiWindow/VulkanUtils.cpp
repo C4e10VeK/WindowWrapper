@@ -129,11 +129,6 @@ namespace winWrap
 
 		return vkCreateWin32SurfaceKHR(instance, &info, pAllocator, surface) == VK_SUCCESS;
 	}
-	
-	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface)
-	{
-		return createVulkanSurfacePr(instance, window, nullptr, &surface);
-	}
 
 	std::vector<const char*> getRequiredExtensions()
 	{

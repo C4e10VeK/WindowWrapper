@@ -31,7 +31,6 @@ namespace winWrap
 
 		friend class Window;
 		friend bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR *surface);
-		friend bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface);
 	public:	
 		PlatformWindow() = default;
 

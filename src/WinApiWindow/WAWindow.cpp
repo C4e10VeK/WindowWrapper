@@ -105,7 +105,7 @@ namespace winWrap
 
 	bool PlatformWindow::createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface)
 	{
-		return createVulkanSurfacePr(instance, *this, surface);
+		return createVulkanSurfacePr(instance, *this, nullptr, &surface);
 	}
 
 	bool PlatformWindow::createSpecificPlatformWindow(const std::string &title, const WindowParams &params)

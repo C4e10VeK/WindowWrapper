@@ -187,11 +187,6 @@ namespace winWrap
 		return VK_ERROR_EXTENSION_NOT_PRESENT;
 	}
 
-	bool createVulkanSurfacePr(VkInstance instance, PlatformWindow &window, VkSurfaceKHR &surface)
-	{
-		return createVulkanSurfacePr(instance, window, nullptr, &surface);
-	}
-
 	std::vector<const char *> getRequiredExtensions()
 	{
 		VulkanWrapper vk;
