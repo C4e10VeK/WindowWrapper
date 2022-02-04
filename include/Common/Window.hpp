@@ -45,36 +45,127 @@ namespace winWrap
 		CloseCallback::IType &closed;
 
 		Window();
+
+		/**
+		 * @brief Construct a new Window by params. Closes the program if window creation failed
+		 * 
+		 * @param title 
+		 * @param params 
+		 */
 		Window(const std::string &title, const WindowParams &params);
 
 		~Window();
 
+		/**
+		 * @brief init window by params
+		 * 
+		 * @param title 
+		 * @param params 
+		 * @return true if window was created without error else false. 
+		 */
 		bool init(const std::string &title, const WindowParams &params) override;
 
+		/**
+		 * @brief chek window is closed
+		 * 
+		 * @return true if wondow closed else false
+		 */
 		[[nodiscard]] bool isClosed() const override;
+
+		/**
+		 * @brief Close window
+		 * 
+		 */
 		void close() override;
 
 		void destroy();
 
+		/**
+		 * @brief Get the window height
+		 * 
+		 * @return i32 
+		 */
 		[[nodiscard]] i32 getHeight() const override;
+
+		/**
+		 * @brief Get the window width
+		 * 
+		 * @return i32 
+		 */
 		[[nodiscard]] i32 getWidth() const override;
 
+		/**
+		 * @brief Get the window size
+		 * 
+		 * @return Size 
+		 */
 		[[nodiscard]] Size getSize() const override;
 
+		/**
+		 * @brief Get the window position
+		 * 
+		 * @return ivec2 
+		 */
 		[[nodiscard]] ivec2 getPosition() const override;
+
+		/**
+		 * @brief Set the window position
+		 * 
+		 * @param position 
+		 */
 		void setPosition(const ivec2 &position) override;
 
+		/**
+		 * @brief Get the window title
+		 * 
+		 * @return const std::string& 
+		 */
 		[[nodiscard]] const std::string &getTitle() const override;
+
+		/**
+		 * @brief Set the window title
+		 * 
+		 * @param title 
+		 */
 		void setTitle(const std::string &title) override;
 
+		/**
+		 * @brief Get the window params
+		 * 
+		 * @return WindowParams 
+		 */
 		WindowParams getParams() override;
 
+		/**
+		 * @brief poll window events
+		 * 
+		 */
 		void pollEvents() override;
 
+		/**
+		 * @brief Create a Vulkan Surface
+		 * 
+		 * @param instance 
+		 * @param pAllocator 
+		 * @param surface 
+		 * @return true if vksurface was created and return VK_SUCCESS else false
+		 */
 		bool createVulkanSurface(VkInstance instance, const VkAllocationCallbacks *pAllocator, VkSurfaceKHR *surface);
 
+		/**
+		 * @brief Create a Vulkan Surface
+		 * 
+		 * @param instance 
+		 * @param surface 
+		 * @return true if vksurface was created and return VK_SUCCESS else false
+		 */
 		bool createVulkanSurface(VkInstance instance, VkSurfaceKHR &surface);
 
+		/**
+		 * @brief Get the Required Vulkan Extensions
+		 * 
+		 * @return std::vector<const char*> 
+		 */
 		static std::vector<const char*> getVulkanExtensions();
 	private:
 		static std::unique_ptr<IPlatformWindow> createSpecificPlatformWindow();

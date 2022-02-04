@@ -41,7 +41,8 @@ namespace winWrap
 		  closed(m_closeEvent)
 	{
 		m_platformWindow = createSpecificPlatformWindow();
-		m_platformWindow->init(title, params);	
+		bool res = m_platformWindow->init(title, params);
+		assert(res && "error while creating window");
 	}
 
 	Window::~Window()
