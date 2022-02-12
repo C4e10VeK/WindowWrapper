@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(WindowWrapper VERSION 0.0.1.2021)
+project(winwrap VERSION 0.0.1.2021)
 
 set(LIBS "")
 set(INCLUDES "")
