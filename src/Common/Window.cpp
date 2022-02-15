@@ -14,14 +14,6 @@
 
 namespace winWrap
 {
-	struct Test
-	{
-		void teest(int a, int b)
-		{
-			std::cout << a + b << std::endl;
-		}
-	};
-
 	Window::Window()
 		: m_platformWindow(nullptr),
 	  	  m_isClosed(true),
