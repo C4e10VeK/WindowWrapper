@@ -126,10 +126,21 @@ namespace winWrap
 		Count
 	};
 
+	enum class Button : i32
+	{
+		Non = -1,
+		Left = 0,
+		Middle,
+		Right,
+
+		Count
+	};
+
 	struct InternalEvent
 	{
 		EventType type{EventType::Non};
 		Key key{Key::Non};
+		Button mouseBtn{Button::Non};
 		Size size;
 		dvec2 mousePos;
 

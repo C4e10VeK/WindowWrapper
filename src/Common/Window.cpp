@@ -20,6 +20,8 @@ namespace winWrap
 	  	  keyPressed(m_keyPressed),
 	  	  keyReleased(m_keyReleased),
 	  	  resized(m_resizeEvent),
+		  mouseButtonPressed(m_mouseButtonPressed),
+		  mouseButtonReleased(m_mouseButtonReleased),
 		  mouseMoved(m_mouseMoved),
 		  closed(m_closeEvent) {}
 
@@ -29,6 +31,8 @@ namespace winWrap
 		  keyPressed(m_keyPressed),
 		  keyReleased(m_keyReleased),
 		  resized(m_resizeEvent),
+		  mouseButtonPressed(m_mouseButtonPressed),
+		  mouseButtonReleased(m_mouseButtonReleased),
 		  mouseMoved(m_mouseMoved),
 		  closed(m_closeEvent)
 	{
@@ -137,6 +141,12 @@ namespace winWrap
 				break;
 			case EventType::Resized:
 				m_resizeEvent(*this, event.size);
+				break;
+			case EventType::MouseButtonPressed:
+				m_mouseButtonPressed(*this, event.mouseBtn);
+				break;
+			case EventType::MouseButtonReleased:
+				m_mouseButtonReleased(*this, event.mouseBtn);
 				break;
 			case EventType::MouseMoved:
 				m_mouseMoved(*this, event.mousePos);

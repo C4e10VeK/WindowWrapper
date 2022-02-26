@@ -23,6 +23,8 @@ namespace winWrap
 		using KeyPressedCallback = Callback<IWindow &, Key>;
 		using KeyReleasedCallback = Callback<IWindow &, Key>;
 		using ResizeCallback = Callback<IWindow &, Size>;
+		using MouseButtonPressedCallback = Callback<IWindow &, Button>;
+		using MouseButtonReleasedCallback = Callback<IWindow &, Button>;
 		using MouseMoveCallback = Callback<IWindow &, dvec2>;
 		using CloseCallback = Callback<>;
 
@@ -35,12 +37,16 @@ namespace winWrap
 		KeyPressedCallback m_keyPressed;
 		KeyReleasedCallback m_keyReleased;
 		ResizeCallback m_resizeEvent;
+		MouseButtonPressedCallback m_mouseButtonPressed;
+		MouseButtonReleasedCallback m_mouseButtonReleased;
 		MouseMoveCallback m_mouseMoved;
 		CloseCallback m_closeEvent;
 	public:
 		KeyPressedCallback::IType &keyPressed;
 		KeyReleasedCallback::IType &keyReleased;
 		ResizeCallback::IType &resized;
+		MouseButtonPressedCallback::IType &mouseButtonPressed;
+		MouseButtonReleasedCallback::IType &mouseButtonReleased;
 		MouseMoveCallback::IType &mouseMoved;
 		CloseCallback::IType &closed;
 

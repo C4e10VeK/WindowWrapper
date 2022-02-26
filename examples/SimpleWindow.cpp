@@ -27,6 +27,12 @@ int main()
 		std::cout << "Size = " << "{width: " << size.width << "; height: " << size.height << "}" << std::endl;
 	});
 
+	wnd.mouseButtonPressed = winWrap::createCallback([](auto &wnd, auto btn)
+	{
+		if (btn == winWrap::Button::Left)
+			std::cout << "left btn clicked" << std::endl;
+	});
+
 	while (!wnd.isClosed())
 	{
 		wnd.pollEvents();

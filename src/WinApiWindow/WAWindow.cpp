@@ -205,6 +205,54 @@ namespace winWrap
 					m_eventList.push(event);
 				}
 				break;
+			case WM_LBUTTONDOWN:
+				{
+					InternalEvent event;
+					event.type = EventType::MouseButtonPressed;
+					event.mouseBtn = Button::Left;
+					m_eventList.push(event);
+				}
+				break;
+			case WM_LBUTTONUP:
+				{
+					InternalEvent event;
+					event.type = EventType::MouseButtonReleased;
+					event.mouseBtn = Button::Left;
+					m_eventList.push(event);
+				}
+				break;
+			case WM_RBUTTONDOWN:
+				{
+					InternalEvent event;
+					event.type = EventType::MouseButtonPressed;
+					event.mouseBtn = Button::Right;
+					m_eventList.push(event);
+				}
+				break;
+			case WM_RBUTTONUP:
+				{
+					InternalEvent event;
+					event.type = EventType::MouseButtonReleased;
+					event.mouseBtn = Button::Right;
+					m_eventList.push(event);
+				}
+				break;
+			case WM_MBUTTONDOWN:
+				{
+					InternalEvent event;
+					event.type = EventType::MouseButtonPressed;
+					event.mouseBtn = Button::Middle;
+					m_eventList.push(event);
+				}
+				break;
+			case WM_MBUTTONUP:
+				{
+					InternalEvent event;
+					event.type = EventType::MouseButtonReleased;
+					event.mouseBtn = Button::Middle;
+					m_eventList.push(event);
+				}
+				break;
 			case WM_MOUSEMOVE:
 				{
 					InternalEvent event;
