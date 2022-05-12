@@ -47,18 +47,25 @@ namespace winWrap
 	i32 PlatformWindow::getWidth() const
 	{
 		RECT wRect;
-		GetWindowRect(m_windowHandle, &wRect);
+		GetClientRect(m_windowHandle, &wRect);
 		return wRect.right - wRect.left;
 	}
 
 	i32 PlatformWindow::getHeight() const
 	{
 		RECT wRect;
-		GetWindowRect(m_windowHandle, &wRect);
+		GetClientRect(m_windowHandle, &wRect);
 		return wRect.bottom - wRect.top;
 	}
 
 	Size PlatformWindow::getSize() const
+	{
+		RECT wRect;
+		GetClientRect(m_windowHandle, &wRect);
+		return {wRect.right - wRect.left, wRect.bottom - wRect.top};
+	}
+
+	Size PlatformWindow::getWindowSize() const
 	{
 		RECT wRect;
 		GetWindowRect(m_windowHandle, &wRect);
@@ -201,7 +208,7 @@ namespace winWrap
 				{
 					InternalEvent event;
 					event.type = EventType::Resized;
-					event.size = ivec2(getWidth(), getHeight());
+					event.size = getSize();
 					m_eventList.push(event);
 				}
 				break;

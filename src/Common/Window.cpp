@@ -91,13 +91,19 @@ namespace winWrap
 
 	Size Window::getSize() const
 	{
-		static Size errSize(1);
+		static Size errSize(-1);
 		return m_platformWindow != nullptr ? m_platformWindow->getSize() : errSize;
+	}
+
+	Size Window::getWindowSize() const
+	{
+		static Size errSize(-1);
+		return m_platformWindow != nullptr ? m_platformWindow->getWindowSize() : errSize;
 	}
 
 	ivec2 Window::getPosition() const
 	{
-		static ivec2 err(0);
+		static ivec2 err(-1);
 		return m_platformWindow != nullptr ? m_platformWindow->getPosition() : err;
 	}
 

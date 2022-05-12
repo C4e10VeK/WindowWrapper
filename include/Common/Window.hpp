@@ -107,6 +107,8 @@ namespace winWrap
 		 */
 		[[nodiscard]] Size getSize() const override;
 
+		[[nodiscard]] Size getWindowSize() const override;
+
 		/**
 		 * @brief Get the window position
 		 * 

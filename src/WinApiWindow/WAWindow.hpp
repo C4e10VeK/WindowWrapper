@@ -46,6 +46,7 @@ namespace winWrap
 		[[nodiscard]] i32 getHeight() const override;
 
 		[[nodiscard]] Size getSize() const override;
+		[[nodiscard]] Size getWindowSize() const override;
 
 		[[nodiscard]] ivec2 getPosition() const override;
 		void setPosition(const ivec2 &position) override;

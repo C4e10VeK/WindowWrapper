@@ -30,6 +30,7 @@ namespace winWrap
 		[[nodiscard]] virtual i32 getHeight() const = 0;
 
 		[[nodiscard]] virtual Size getSize() const = 0;
+		[[nodiscard]] virtual Size getWindowSize() const = 0;
 
 		[[nodiscard]] virtual ivec2 getPosition() const = 0;
 		virtual void setPosition(const ivec2 &position) = 0;
