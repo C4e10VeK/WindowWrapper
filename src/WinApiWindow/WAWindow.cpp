@@ -131,7 +131,7 @@ namespace winWrap
 		DWORD dwStyle = WS_OVERLAPPEDWINDOW;
 
 		if (!params.resizeable)
-			dwStyle ^= WS_THICKFRAME;
+			dwStyle ^= WS_THICKFRAME|WS_MAXIMIZEBOX;
 
 		m_windowHandle = CreateWindowExA(
 				0,
