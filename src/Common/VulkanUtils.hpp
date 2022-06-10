@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include <Common/Types.hpp>
-#include <Common/Vulkan.hpp>
+#include <WinWrap/Common/Types.hpp>
+#include <WinWrap/Common/Vulkan.hpp>
 
 #ifdef _WIN32
 #define VK_API_CALL __stdcall 

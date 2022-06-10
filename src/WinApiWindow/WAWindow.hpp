@@ -5,10 +5,10 @@
 
 #include <windows.h>
 
-#include <Common/IPlatformWindow.hpp>
-#include <Common/Noncopybale.hpp>
-#include <Common/WindowParams.hpp>
-#include <Common/InternalEvent.hpp>
+#include <WinWrap/Common/IPlatformWindow.hpp>
+#include <WinWrap/Common/Noncopybale.hpp>
+#include <WinWrap/Common/WindowParams.hpp>
+#include <WinWrap/Common/InternalEvent.hpp>
 
 namespace winWrap
 {

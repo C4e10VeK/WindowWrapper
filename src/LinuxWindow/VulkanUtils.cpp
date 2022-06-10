@@ -147,18 +147,18 @@ namespace winWrap
 		vk.loadLib();
 
 		if (!vk.isAvailable())
-			return VK_ERROR_EXTENSION_NOT_PRESENT;
+			return false; 
 
 		if (vk.isXcbSupport())
 		{
 			auto vkCreateXcbSurfaceKHR =
 				reinterpret_cast<PFN_vkCreateXcbSurfaceKHR>(vk.vkGetInstanceProcAddr(instance, "vkCreateXcbSurfaceKHR"));
 			if (vkCreateXcbSurfaceKHR == nullptr)
-				return VK_ERROR_EXTENSION_NOT_PRESENT;
+				return false;
 			
 			xcb_connection_t *connection = XGetXCBConnection(window.m_display);
 			if (connection == nullptr)
-				return VK_ERROR_EXTENSION_NOT_PRESENT;
+				return false;
 
 			VkXcbSurfaceCreateInfoKHR info = {
 				.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR,
@@ -173,7 +173,7 @@ namespace winWrap
 			auto vkCreateXlibSurfaceKHR = 
 				reinterpret_cast<PFN_vkCreateXlibSurfaceKHR>(vk.vkGetInstanceProcAddr(instance, "vkCreateXlibSurfaceKHR"));
 			if (vkCreateXlibSurfaceKHR == nullptr)
-				return VK_ERROR_EXTENSION_NOT_PRESENT;
+				return false;
 
 			VkXlibSurfaceCreateInfoKHR info = {
 				.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR,
@@ -184,7 +184,7 @@ namespace winWrap
 			return vkCreateXlibSurfaceKHR(instance, &info, pAllocator, surface) == VK_SUCCESS;
 		}
 
-		return VK_ERROR_EXTENSION_NOT_PRESENT;
+		return false;
 	}
 
 	std::vector<const char *> getRequiredExtensions()

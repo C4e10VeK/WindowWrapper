@@ -4,9 +4,9 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include <Common/IPlatformWindow.hpp>
-#include <Common/Noncopybale.hpp>
-#include <Common/WindowParams.hpp>
+#include <WinWrap/Common/IPlatformWindow.hpp>
+#include <WinWrap/Common/Noncopybale.hpp>
+#include <WinWrap/Common/WindowParams.hpp>
 
 namespace winWrap
 {
@@ -42,6 +42,7 @@ namespace winWrap
 		[[nodiscard]] i32 getHeight() const override;
 
 		[[nodiscard]] Size getSize() const override;
+		[[nodiscard]] Size getWindowSize() const override;
 
 		[[nodiscard]] ivec2 getPosition() const override;
 		void setPosition(const ivec2 &position) override;

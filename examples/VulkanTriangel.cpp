@@ -1,5 +1,5 @@
 #include <vulkan/vulkan.h>
-#include <WindowWrapper.hpp>
+#include <WinWrap/WindowWrapper.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -107,7 +107,7 @@ private:
     bool framebufferResized = false;
 
     void initWindow() {
-        if (!window.init("hello triangel", winWrap::WindowParams(800, 600, winWrap::ivec2(100), true)))
+        if (!window.init("hello triangel", winWrap::WindowParams(800, 600, winWrap::ivec2(100), false)))
 			exit(1);
 		window.resized = winWrap::createCallback(*this, &HelloTriangleApplication::framebufferResizeCallback);
     }
@@ -184,6 +184,8 @@ private:
 		auto size = window.getSize();
         while (size.width == 0 || size.height == 0) {
             size = window.getSize();
+			window.pollEvents();
+			if (window.isClosed()) return;
         }
 
         vkDeviceWaitIdle(device);

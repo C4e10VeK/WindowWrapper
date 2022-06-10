@@ -1,7 +1,7 @@
 #ifndef WINDOWWRAPPER_INPUTUTILS_HPP
 #define WINDOWWRAPPER_INPUTUTILS_HPP
 
-#include <Common/Types.hpp>
+#include <WinWrap/Common/Types.hpp>
 
 namespace winWrap
 {

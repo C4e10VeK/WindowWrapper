@@ -3,7 +3,7 @@
 #include <bitset>
 
 #include <windows.h>
-#include <Common/InternalEvent.hpp>
+#include <WinWrap/Common/InternalEvent.hpp>
 
 namespace winWrap
 {

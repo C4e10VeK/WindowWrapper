@@ -1,4 +1,4 @@
-#include <Common/Window.hpp>
+#include <WinWrap/Common/Window.hpp>
 #include <utility>
 
 #if defined(_WIN32) || defined(__MINGW32__)
@@ -7,7 +7,7 @@
 #include "../LinuxWindow/X11Window.hpp"
 #endif
 
-#include <Common/InternalEvent.hpp>
+#include <WinWrap/Common/InternalEvent.hpp>
 #include <iostream>
 
 #include "VulkanUtils.hpp"

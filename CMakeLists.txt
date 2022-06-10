@@ -26,7 +26,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 endif()
 
 file(GLOB_RECURSE HEADER_FILES
-		"${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/WinWrap/*.hpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/src/Common/*.hpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/src/${PLATFORM_PATH}/*.hpp")
 

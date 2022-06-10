@@ -1,7 +1,7 @@
 #include "X11Window.hpp"
 
 #include <unistd.h>
-#include <Common/InternalEvent.hpp>
+#include <WinWrap/Common/InternalEvent.hpp>
 
 #include "../Common/InputUtils.hpp"
 #include "../Common/VulkanUtils.hpp"
@@ -41,6 +41,11 @@ namespace winWrap
 		XWindowAttributes atr;
 		XGetWindowAttributes(m_display, m_xWindow, &atr);
 		return {atr.width, atr.height};
+	}
+
+	Size PlatformWindow::getWindowSize() const
+	{
+		return Size(0);
 	}
 
 	ivec2 PlatformWindow::getPosition() const

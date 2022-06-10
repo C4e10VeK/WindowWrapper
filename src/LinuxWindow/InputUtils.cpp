@@ -1,5 +1,5 @@
 #include "../Common/InputUtils.hpp"
-#include <Common/InternalEvent.hpp>
+#include <WinWrap/Common/InternalEvent.hpp>
 
 #include <X11/keysym.h>
 
