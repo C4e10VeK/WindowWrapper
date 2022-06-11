@@ -1,5 +1,4 @@
-#ifndef WINDOWWRAPPER_SRC_WINAPIWINDOW_WAWINDOW_HPP
-#define WINDOWWRAPPER_SRC_WINAPIWINDOW_WAWINDOW_HPP
+#pragma once
 
 #include <queue>
 
@@ -70,4 +69,3 @@ namespace winWrap
 	};
 }
 
-#endif // WINDOWWRAPPER_SRC_WINAPIWINDOW_WAWINDOW_HPP

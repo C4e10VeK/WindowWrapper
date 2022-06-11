@@ -1,5 +1,4 @@
-#ifndef WINDOWWRAPPER_INPUTUTILS_HPP
-#define WINDOWWRAPPER_INPUTUTILS_HPP
+#pragma once
 
 #include <WinWrap/Common/Types.hpp>
 
@@ -19,4 +18,3 @@ namespace winWrap
 	i32 keyToSpecificPlatformKey(Key key);
 }
 
-#endif // WINDOWWRAPPER_INPUTUTILS_HPP

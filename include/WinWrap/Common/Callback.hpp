@@ -29,7 +29,7 @@ namespace winWrap
 		FunctorHolder(F &functor) : m_functor(functor) { }
 
 		template<typename... Args>
-		operator std::shared_ptr<ICallbackHandler<Args...>>()
+		constexpr operator std::shared_ptr<ICallbackHandler<Args...>>()
 		{
 			return std::make_shared<FunctorCallbackHandler<F, Args...>>(m_functor);
 		}
@@ -76,7 +76,7 @@ namespace winWrap
 		virtual void connect(CallbackPtr &&callback) = 0;
 
 		template<typename T>
-		ICallback &operator=(T &&some)
+		constexpr ICallback &operator=(T &&some)
 		{
 			connect(static_cast<CallbackPtr>(some));
 			return *this;

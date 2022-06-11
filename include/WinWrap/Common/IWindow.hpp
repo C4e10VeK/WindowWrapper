@@ -1,5 +1,4 @@
-#ifndef WINDOWWRAPPER_IWINDOW_HPP
-#define WINDOWWRAPPER_IWINDOW_HPP
+#pragma once
 
 #include "Types.hpp"
 
@@ -44,4 +43,3 @@ namespace winWrap
 	};
 }
 
-#endif // WINDOWWRAPPER_IWINDOW_HPP

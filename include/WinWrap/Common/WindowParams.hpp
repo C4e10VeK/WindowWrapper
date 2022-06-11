@@ -1,5 +1,4 @@
-#ifndef WINDOWWRAPPER_WINDOWPARAMS_HPP
-#define WINDOWWRAPPER_WINDOWPARAMS_HPP
+#pragma once
 
 #include "Types.hpp"
 #include "Vector.hpp"
@@ -29,4 +28,3 @@ namespace winWrap
 	};
 }
 
-#endif // WINDOWWRAPPER_WINDOWPARAMS_HPP

@@ -1,5 +1,4 @@
-#ifndef WINDOWWRAPPER_VECTORT_HPP
-#define WINDOWWRAPPER_VECTORT_HPP
+#pragma once
 
 #include "Types.hpp"
 
@@ -88,4 +87,3 @@ namespace winWrap
 	using dvec2 = vec2<double>;
 }
 
-#endif // WINDOWWRAPPER_VECTORT_HPP

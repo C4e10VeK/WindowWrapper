@@ -1,5 +1,4 @@
-#ifndef WINDOWWRAPPER_VULKAN_HPP
-#define WINDOWWRAPPER_VULKAN_HPP
+#pragma once
 
 using VkInstance = struct VkInstance_T*;
 
@@ -15,4 +14,3 @@ using VkSurfaceKHR = uint64_t;
 
 struct VkAllocationCallbacks;
 
-#endif

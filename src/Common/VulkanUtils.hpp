@@ -1,5 +1,4 @@
-#ifndef WINDOWWRAPPER_VULKAN_UTILS_HPP
-#define WINDOWWRAPPER_VULKAN_UTILS_HPP
+#pragma once
 
 #include <vector>
 
@@ -89,5 +88,3 @@ namespace winWrap
 	std::vector<const char *> getRequiredExtensions();
 } // namespace winwrap
 
-
-#endif

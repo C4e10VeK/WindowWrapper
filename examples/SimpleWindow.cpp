@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <WindowWrapper.hpp>
+#include <WinWrap/WindowWrapper.hpp>
 
 int main()
 {

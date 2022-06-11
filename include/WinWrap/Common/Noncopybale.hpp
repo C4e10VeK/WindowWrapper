@@ -1,5 +1,4 @@
-#ifndef WINDOWWRAPPER_NONCOPYBALE_HPP
-#define WINDOWWRAPPER_NONCOPYBALE_HPP
+#pragma once
 
 namespace winWrap
 {
@@ -15,4 +14,3 @@ namespace winWrap
 	};
 }
 
-#endif // WINDOWWRAPPER_NONCOPYBALE_HPP

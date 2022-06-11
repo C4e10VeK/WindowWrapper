@@ -1,5 +1,4 @@
-#ifndef WINDOWWRAPPER_SRC_LINUXWINDOW_X11WINDOW_HPP
-#define WINDOWWRAPPER_SRC_LINUXWINDOW_X11WINDOW_HPP
+#pragma once
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -63,4 +62,3 @@ namespace winWrap
 	};
 }
 
-#endif // WINDOWWRAPPER_SRC_LINUXWINDOW_X11WINDOW_HPP

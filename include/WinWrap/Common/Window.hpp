@@ -1,5 +1,4 @@
-#ifndef WINDOWWRAPPER_WINDOW_HPP
-#define WINDOWWRAPPER_WINDOW_HPP
+#pragma once
 
 #include <memory>
 #include <string>
@@ -180,4 +179,3 @@ namespace winWrap
 	};
 }
 
-#endif // WINDOWWRAPPER_WINDOW_HPP

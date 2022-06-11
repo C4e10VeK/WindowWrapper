@@ -1,5 +1,4 @@
-#ifndef WINDOWWRAPPER_SRC_COMMON_PLATFORM_WINDOW_BASE_HPP
-#define WINDOWWRAPPER_SRC_COMMON_PLATFORM_WINDOW_BASE_HPP
+#pragma once
 
 #include <string>
 #include "Types.hpp"
@@ -44,4 +43,3 @@ namespace winWrap
 	};	
 }
 
-#endif // WINDOWWRAPPER_SRC_COMMON_WINDOW_HPP

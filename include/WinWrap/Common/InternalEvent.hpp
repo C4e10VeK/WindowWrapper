@@ -1,5 +1,4 @@
-#ifndef WINDOWWRAPPER_ENUMEVENT_HPP
-#define WINDOWWRAPPER_ENUMEVENT_HPP
+#pragma once
 
 #include "Types.hpp"
 #include "Vector.hpp"
@@ -147,6 +146,4 @@ namespace winWrap
 		InternalEvent() = default;
 	};
 }
-
-#endif // WINDOWWRAPPER_ENUMEVENT_HPP
 
