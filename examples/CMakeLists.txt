@@ -1,0 +1,2 @@
+add_subdirectory(VulkanTriangle)
+add_subdirectory(SimpleWindow)
