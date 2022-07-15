@@ -107,7 +107,7 @@ private:
     bool framebufferResized = false;
 
     void initWindow() {
-        if (!window.init("hello triangel", winWrap::WindowParams(800, 600, winWrap::ivec2(100), false)))
+        if (!window.init("hello triangle", winWrap::WindowParams(800, 600, winWrap::ivec2(100), false)))
 			exit(1);
 		window.resized = winWrap::createCallback(*this, &HelloTriangleApplication::framebufferResizeCallback);
     }
