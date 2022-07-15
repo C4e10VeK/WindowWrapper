@@ -71,9 +71,9 @@ namespace winWrap
 		bool init(const std::string &title, const WindowParams &params) override;
 
 		/**
-		 * @brief chek window is closed
+		 * @brief check window is closed
 		 * 
-		 * @return true if wondow closed else false
+		 * @return true if window closed else false
 		 */
 		[[nodiscard]] bool isClosed() const override;
 
