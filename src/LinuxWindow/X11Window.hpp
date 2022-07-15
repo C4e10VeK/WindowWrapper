@@ -4,7 +4,7 @@
 #include <X11/Xutil.h>
 
 #include <WinWrap/Common/IPlatformWindow.hpp>
-#include <WinWrap/Common/Noncopybale.hpp>
+#include <WinWrap/Common/Noncopyable.hpp>
 #include <WinWrap/Common/WindowParams.hpp>
 
 namespace winWrap
@@ -12,7 +12,7 @@ namespace winWrap
 
 	struct InternalEvent;
 
-	class PlatformWindow final : noncopybale, public IPlatformWindow
+	class PlatformWindow final : noncopyable, public IPlatformWindow
 	{
 	private:
 		struct Atoms

@@ -5,13 +5,13 @@
 #include <windows.h>
 
 #include <WinWrap/Common/IPlatformWindow.hpp>
-#include <WinWrap/Common/Noncopybale.hpp>
+#include <WinWrap/Common/Noncopyable.hpp>
 #include <WinWrap/Common/WindowParams.hpp>
 #include <WinWrap/Common/InternalEvent.hpp>
 
 namespace winWrap
 {
-	class PlatformWindow : noncopybale, public IPlatformWindow
+	class PlatformWindow : noncopyable, public IPlatformWindow
 	{
 	private:
 		MSG m_winMsg{};
