@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "Noncopybale.hpp"
+#include "Noncopyable.hpp"
 #include "Callback.hpp"
 #include "IWindow.hpp"
 #include "Vulkan.hpp"
@@ -16,7 +16,7 @@ namespace winWrap
 {
 	struct WindowParams;
 
-	class Window : noncopybale, public IWindow
+	class Window : noncopyable, public IWindow
 	{
 	private:
 		using KeyPressedCallback = Callback<IWindow &, Key>;
