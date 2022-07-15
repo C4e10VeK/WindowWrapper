@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(winwrap VERSION 0.0.1.2021)
 
+option(BUILD_EXAMPLES "Build examples?" ON)
+
 set(LIBS "")
 set(INCLUDES "")
 
@@ -39,3 +41,8 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDES} "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(${PROJECT_NAME} INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+if(BUILD_EXAMPLES)
+	add_subdirectory(examples)
+endif()
