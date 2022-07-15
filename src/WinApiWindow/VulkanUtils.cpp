@@ -3,11 +3,11 @@
 #include <cstring>
 
 struct VkWin32SurfaceCreateInfoKHR {
-	VkStructureType					sType;
-	const void*						pNext;
-	winWrap::u32					flags;
-	HINSTANCE						hinstance;
-	HWND							hwnd;
+	VkStructureType	sType;
+	const void*	    pNext;
+	winWrap::u32    flags;
+	HINSTANCE	      hinstance;
+	HWND            hwnd;
 };
 
 using PFN_vkCreateWin32SurfaceKHR = VkResult (VK_API_CALL *)(VkInstance instance, const VkWin32SurfaceCreateInfoKHR* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
