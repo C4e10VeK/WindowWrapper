@@ -3,8 +3,12 @@
 
 #if defined(_WIN32) || defined(__MINGW32__)
 #include "../WinApiWindow/WAWindow.hpp"
-#elif defined(__linux__) && !defined(__MINGW32__)
-#include "../LinuxWindow/X11Window.hpp"
+#elif !defined(__MINGW32__)
+#ifdef WINWRAP_X11
+#include "../X11Window/X11Window.hpp"
+#else
+#include "../WaylandWindow/WaylandWindow.hpp"
+#endif
 #endif
 
 #include <WinWrap/Common/InternalEvent.hpp>
